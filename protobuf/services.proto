@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package services;
+option go_package = "server/generated/services";
+
+import "messages.proto";
+
+
+service Service {
+    rpc Auth (messages.AuthRequest) returns (messages.AuthResponse) {}
+}

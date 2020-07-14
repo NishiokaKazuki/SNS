@@ -1,0 +1,4 @@
+/asset
+/server/generated/enums/*
+/server/generated/messages/*
+/server/generated/services/*

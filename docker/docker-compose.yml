@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  postgresql:
+    image: postgres:12.0
+    restart: always
+    volumes:
+      - "../db/data:/var/lib/postgresql/data"
+      - "../db/conf/postgresql.conf:/etc/postgresql.conf"
+      - "../db/initdb.d:/docker-entrypoint-initdb.d"
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "secret"
+      POSTGRES_DB: "sns"
