@@ -82,6 +82,7 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 CREATE TABLE diffusions
 (
+    id bigserial,
     user_id bigserial NOT NULL,
     post_id bigserial NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
@@ -124,27 +125,12 @@ CREATE TABLE notification_to_follows
     updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
+    FOREIGN KEY (to_follow_id)
+    REFERENCES to_follows(id),
 );
 
 CREATE TRIGGER set_update_notification_to_follows
 BEFORE UPDATE ON notification_to_follows
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TABLE notification_praises
-(
-    notification_id bigserial NOT NULL,
-    praise_id bigserial NOT NULL,
-    created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
-    FOREIGN KEY (notification_id)
-    REFERENCES notifications(id),
-    FOREIGN KEY (praise_id)
-    REFERENCES praises(id),
-);
-
-CREATE TRIGGER set_update_notification_to_follows
-BEFORE UPDATE ON notification_follows
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
