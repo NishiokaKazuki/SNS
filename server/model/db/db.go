@@ -16,7 +16,7 @@ func GetDBConnect() *xorm.xEngine {
 	return engine
 }
 
-func xormConnect() *xorm.Engine {
+func XormConnect() *xorm.Engine {
 
 	db, err := xorm.NewEngine(getDBConfig())
 	if err != nil {
