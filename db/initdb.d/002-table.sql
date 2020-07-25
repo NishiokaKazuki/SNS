@@ -20,6 +20,23 @@ BEFORE UPDATE ON app_users
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
 
+CREATE TABLE tokens
+(
+    id bigserial,
+    user_id bigserial unsigned NOT NULL,
+    token text NOT NULL,
+    created_at       timestamp NOT NULL DEFAULT current_timestamp,
+    updated_at       timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    FOREIGN KEY (user_id) 
+     REFERENCES app_users(id),
+    PRIMARY KEY (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TRIGGER set_update_tokens
+BEFORE UPDATE ON tokens
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
+
 CREATE TABLE to_follows
 (
     id      bigserial,
