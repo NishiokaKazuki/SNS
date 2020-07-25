@@ -9,7 +9,7 @@ INSERT INTO app_users(id, handle, password, name, birthday, profile, image, is_p
     (6, "test_06", "secret", "テスト6", "2000-01-06", "６", "", true);
 
 /* 0;未確認 1:許可 2:拒否 */
-INSERT INTO to_follows(id, to_user, by_user, permit) VALUES
+INSERT INTO to_follows(id, to_user, by_user, permission) VALUES
     (1, 1, 2, 1 ),
     (2, 1, 3, 1 ),
     (3, 1, 4, 1 ),

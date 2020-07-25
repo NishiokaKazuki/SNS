@@ -13,3 +13,19 @@ message AuthResponse {
     enums.StatusCodes status_code = 2;
     string token = 3;
 }
+
+message UserRequest {
+    string token = 1;
+}
+message UserResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+    AppUser user = 3;
+    message AppUser {
+        string handle = 1;
+        string name = 2;
+        string birthday = 3;
+        string profile = 4;
+        bool is_private = 5;
+    }
+}

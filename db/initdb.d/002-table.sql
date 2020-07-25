@@ -25,7 +25,7 @@ CREATE TABLE to_follows
     id      bigserial,
     to_user bigserial NOT NULL,
     by_user bigserial NOT NULL,
-    permit  smallint NOT NULL default 0,
+    permission  smallint NOT NULL default 0,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
     FOREIGN KEY (to_user)

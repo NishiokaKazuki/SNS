@@ -8,3 +8,16 @@ enum StatusCodes {
     SUCCESS = 1;
     FAILED_AUTH = 2;
 }
+
+enum NotifyStatus {
+    NOTIFY_UNCONFIRMED = 0; // 未確認
+    NOTIFY_ACCEPTED = 1;    // 許可
+    NOTIFY_DECLINED = 2;    // 拒否
+    NOTIFY_CANCELED = 3;    // キャンセル
+}
+
+enum PermitStatus {
+    PERMISSION_UNCONFIRMED = 0; // 未確認
+    PERMISSION_ACCEPTED = 1;    // 許可
+    PERMISSION_DECLINED = 2;    // 拒否
+}
