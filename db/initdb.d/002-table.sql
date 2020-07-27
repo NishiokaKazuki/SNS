@@ -11,7 +11,7 @@ CREATE TABLE app_users
     is_private boolean NOT NULL DEFAULT false,
     disabled boolean NOT NULL DEFAULT false,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     PRIMARY KEY (id)
 );
 
@@ -23,10 +23,10 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 CREATE TABLE tokens
 (
     id bigserial,
-    user_id bigserial unsigned NOT NULL,
+    user_id bigserial NOT NULL,
     token text NOT NULL,
     created_at       timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at       timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at       timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id) 
      REFERENCES app_users(id),
     PRIMARY KEY (id)
@@ -44,7 +44,7 @@ CREATE TABLE to_follows
     by_user bigserial NOT NULL,
     permission  smallint NOT NULL default 0,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (to_user)
     REFERENCES app_users(id),
     FOREIGN KEY (by_user)
@@ -64,7 +64,7 @@ CREATE TABLE posts
     body text NOT NULL,
     disabled boolean NOT NULL DEFAULT false,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
     FOREIGN KEY (to_post)
@@ -84,7 +84,7 @@ CREATE TABLE praises
     post_id bigserial NOT NULL,
     disabled boolean NOT NULL DEFAULT false,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
     FOREIGN KEY (post_id)
@@ -103,7 +103,7 @@ CREATE TABLE diffusions
     user_id bigserial NOT NULL,
     post_id bigserial NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
     FOREIGN KEY (post_id)
@@ -123,7 +123,7 @@ CREATE TABLE notifications
     type       smallint  NOT NULL,
     status     smallint  NOT NULL DEFAULT 0,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
     PRIMARY KEY (id)
@@ -139,7 +139,7 @@ CREATE TABLE notification_to_follows
     notification_id bigserial NOT NULL,
     to_follow_id bigserial NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (to_follow_id)
@@ -156,7 +156,7 @@ CREATE TABLE notification_praises
     notification_id bigserial NOT NULL,
     praise_id bigserial NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (praise_id)
@@ -173,7 +173,7 @@ CREATE TABLE notification_diffusions
     notification_id bigserial NOT NULL,
     diffusion_id bigserial NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (diffusion_id)
@@ -190,7 +190,7 @@ CREATE TABLE notification_mentions
     notification_id bigserial NOT NULL,
     post_id bigserial NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
-    updated_at timestamp NOT NULL DEFAULT current_timestamp on update current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (post_id)
