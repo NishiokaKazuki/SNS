@@ -10,9 +10,9 @@ const (
 	configpath = "configs/config.toml"
 )
 
-var engine = xormConnect()
+var engine = XormConnect()
 
-func GetDBConnect() *xorm.xEngine {
+func GetDBConnect() *xorm.Engine {
 	return engine
 }
 
