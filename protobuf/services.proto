@@ -8,4 +8,5 @@ import "messages.proto";
 
 service Service {
     rpc Auth (messages.AuthRequest) returns (messages.AuthResponse) {}
+    rpc User (messages.UserRequest) returns (messages.UserResponse) {}
 }
