@@ -25,7 +25,7 @@ type DBConfigs struct {
 	User     string `toml:"user"`
 	Pass     string `toml:"pass"`
 	Protocol string `toml:"protocol"`
-	Dbname   string `toml:"dbname"`
+	DbName   string `toml:"dbname"`
 }
 
 func ReadAPIConfig(path string) (APIConfigs, error) {

@@ -32,7 +32,7 @@ func getDBConfig() (string, string) {
 		panic(err.Error())
 	}
 
-	CONNECT := conf.User + ":" + conf.Pass + "@" + conf.Protocol + "/" + conf.Dbname + "?parseTime=true"
+	CONNECT := conf.User + ":" + conf.Pass + "@" + conf.Protocol + "/" + conf.DbName + "?parseTime=true"
 
 	return conf.Dbms, CONNECT
 }
