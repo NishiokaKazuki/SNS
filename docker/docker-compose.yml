@@ -1,17 +1,19 @@
 version: "3"
 
 services:
-  postgresql:
-    image: postgres:12.0
+  mysql:
+    build: ../db
     restart: always
     volumes:
-      - "../db/data:/var/lib/postgresql/data"
-      - "../db/conf/postgresql.conf:/etc/postgresql.conf"
+      - "../db/data:/var/lib/mysql/"
+      - "../db/conf:/etc/mysql/conf.d"
       - "../db/initdb.d:/docker-entrypoint-initdb.d"
-    ports:
-      - "15432:5432"
     environment:
-      POSTGRES_USER: "root"
-      POSTGRES_PASSWORD: "secret"
-      POSTGRES_DB: "sns"
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: sns
+      MYSQL_USER: kazuki
+      MYSQL_PASSWORD: secret
+      TZ: 'Asia/Tokyo'
+    ports:
+      - "13306:3306"
     container_name: "sns-db"

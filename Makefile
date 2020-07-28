@@ -11,6 +11,10 @@ protoc-server:
 	protoc -I protobuf/ protobuf/messages.proto --go_out=plugins=grpc:./
 	protoc -I protobuf/ protobuf/services.proto --go_out=plugins=grpc:./
 
+docker-build:
+	cd docker &&\
+	docker-compose build --no-cache
+
 docker-up:
 	cd docker &&\
 	docker-compose up -d
@@ -29,12 +33,8 @@ docker-stop:
 
 docker-rm:
 	cd docker &&\
-	docker-compose rm -f &&\
+	docker-compose rm -f
 	rm -rf db/data/*
-
-docker-build:
-	cd docker &&\
-	docker-compose build
 
 docker-ps:
 	cd docker &&\

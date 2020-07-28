@@ -28,11 +28,15 @@ type ToFollows struct {
 type Posts struct {
 	Id        uint64
 	UserId    uint64
-	ToPost    uint64
 	Body      string
 	Disabled  bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+type ToPosts struct {
+	ByPost uint64
+	ToPost uint64
 }
 
 type Praises struct {

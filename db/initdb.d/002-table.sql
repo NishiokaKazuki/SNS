@@ -1,8 +1,9 @@
-\c sns
+CREATE DATABASE IF NOT EXISTS sns;
+use sns;
 CREATE TABLE app_users
 (
-    id bigserial,
-    handle text NOT NULL UNIQUE,
+    id bigint unsigned AUTO_INCREMENT,
+    handle VARCHAR(255) NOT NULL UNIQUE,
     password text NOT NULL,
     name text NOT NULL,
     birthday date,
@@ -13,191 +14,145 @@ CREATE TABLE app_users
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     PRIMARY KEY (id)
-);
-
-CREATE TRIGGER set_update_app_users
-BEFORE UPDATE ON app_users
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE tokens
 (
-    id bigserial,
-    user_id bigserial NOT NULL,
+    id bigint unsigned AUTO_INCREMENT,
+    user_id bigint unsigned NOT NULL,
     token text NOT NULL,
     created_at       timestamp NOT NULL DEFAULT current_timestamp,
     updated_at       timestamp NOT NULL DEFAULT current_timestamp,
-    FOREIGN KEY (user_id) 
+    FOREIGN KEY (user_id)
      REFERENCES app_users(id),
     PRIMARY KEY (id)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TRIGGER set_update_tokens
-BEFORE UPDATE ON tokens
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
 CREATE TABLE to_follows
 (
-    id      bigserial,
-    to_user bigserial NOT NULL,
-    by_user bigserial NOT NULL,
-    permission  smallint NOT NULL default 0,
+    id      bigint unsigned,
+    to_user bigint unsigned NOT NULL,
+    by_user bigint unsigned NOT NULL,
+    permission  int unsigned NOT NULL default 0,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (to_user)
     REFERENCES app_users(id),
     FOREIGN KEY (by_user)
     REFERENCES app_users(id),
-);
-
-CREATE TRIGGER set_update_to_follows
-BEFORE UPDATE ON to_follows
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+    PRIMARY KEY (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE posts
 (
-    id bigserial,
-    user_id bigserial NOT NULL,
-    to_post bigserial DEFAULT NULL,
+    id bigint unsigned AUTO_INCREMENT,
+    user_id bigint unsigned NOT NULL,
+    to_post bigint unsigned,
     body text NOT NULL,
     disabled boolean NOT NULL DEFAULT false,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
-    FOREIGN KEY (to_post)
-    REFERENCES posts(id),
     PRIMARY KEY (id)
-);
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
-CREATE TRIGGER set_update_posts
-BEFORE UPDATE ON posts
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+CREATE TABLE to_posts
+(
+    by_post bigint unsigned NOT NULL,
+    to_post bigint unsigned NOT NULL,
+    FOREIGN KEY (by_post)
+    REFERENCES posts(id),
+    FOREIGN KEY (to_post)
+    REFERENCES posts(id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE praises
 (
-    id bigserial,
-    user_id bigserial NOT NULL,
-    post_id bigserial NOT NULL,
+    id bigint unsigned AUTO_INCREMENT,
+    user_id bigint unsigned NOT NULL,
+    post_id bigint unsigned NOT NULL,
     disabled boolean NOT NULL DEFAULT false,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
     FOREIGN KEY (post_id)
-    REFERENCES post(id),
+    REFERENCES posts(id),
     PRIMARY KEY (id)
-);
-
-CREATE TRIGGER set_update_praises
-BEFORE UPDATE ON praises
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE diffusions
 (
-    id bigserial,
-    user_id bigserial NOT NULL,
-    post_id bigserial NOT NULL,
+    id bigint unsigned AUTO_INCREMENT,
+    user_id bigint unsigned NOT NULL,
+    post_id bigint unsigned NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
     FOREIGN KEY (post_id)
-    REFERENCES post(id),
+    REFERENCES posts(id),
     PRIMARY KEY (id)
-);
-
-CREATE TRIGGER set_update_diffusions
-BEFORE UPDATE ON diffusions
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE notifications
 (
-    id         bigserial,
-    user_id    bigserial NOT NULL,
-    type       smallint  NOT NULL,
-    status     smallint  NOT NULL DEFAULT 0,
+    id         bigint unsigned,
+    user_id    bigint unsigned NOT NULL,
+    type       int unsigned  NOT NULL,
+    status     int unsigned  NOT NULL DEFAULT 0,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
     REFERENCES app_users(id),
     PRIMARY KEY (id)
-);
-
-CREATE TRIGGER set_update_notifications
-BEFORE UPDATE ON notifications
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE notification_to_follows
 (
-    notification_id bigserial NOT NULL,
-    to_follow_id bigserial NOT NULL,
+    notification_id bigint unsigned NOT NULL,
+    to_follow_id bigint unsigned NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (to_follow_id)
-    REFERENCES to_follows(id),
-);
-
-CREATE TRIGGER set_update_notification_to_follows
-BEFORE UPDATE ON notification_to_follows
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+    REFERENCES to_follows(id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE notification_praises
 (
-    notification_id bigserial NOT NULL,
-    praise_id bigserial NOT NULL,
+    notification_id bigint unsigned NOT NULL,
+    praise_id bigint unsigned NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (praise_id)
-    REFERENCES praises(id),
-);
-
-CREATE TRIGGER set_update_notification_praises
-BEFORE UPDATE ON notification_praises
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+    REFERENCES praises(id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE notification_diffusions
 (
-    notification_id bigserial NOT NULL,
-    diffusion_id bigserial NOT NULL,
+    notification_id bigint unsigned NOT NULL,
+    diffusion_id bigint unsigned NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (diffusion_id)
-    REFERENCES diffusions(id),
-);
-
-CREATE TRIGGER set_update_notification_diffusions
-BEFORE UPDATE ON notification_diffusions
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+    REFERENCES diffusions(id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 CREATE TABLE notification_mentions
 (
-    notification_id bigserial NOT NULL,
-    post_id bigserial NOT NULL,
+    notification_id bigint unsigned NOT NULL,
+    post_id bigint unsigned NOT NULL,
     created_at timestamp NOT NULL DEFAULT current_timestamp,
     updated_at timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (notification_id)
     REFERENCES notifications(id),
     FOREIGN KEY (post_id)
-    REFERENCES posts(id),
-);
-
-CREATE TRIGGER set_update_notification_mentions
-BEFORE UPDATE ON notification_mentions
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+    REFERENCES posts(id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
