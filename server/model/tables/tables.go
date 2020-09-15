@@ -16,6 +16,12 @@ type AppUsers struct {
 	UpdatedAt time.Time
 }
 
+type Tokens struct {
+	Id     uint64
+	UserId uint64
+	Token  string
+}
+
 type ToFollows struct {
 	Id        uint64
 	ToUser    uint64

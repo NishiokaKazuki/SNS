@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	configpath = "configs/config.toml"
+	configpath = "config/config.toml"
 )
 
 var engine = XormConnect()

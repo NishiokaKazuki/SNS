@@ -4,13 +4,17 @@ import (
 	"context"
 	"log"
 	"net"
+	"server/auth"
 	"server/generated/enums"
 	"server/generated/messages"
 	pb "server/generated/services"
+	"server/interceptor"
 	"server/model/db"
 	"server/model/tables"
 	qr "server/queries"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -60,7 +64,12 @@ func ListenAndServe(port string) {
 		log.Fatalln(err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			grpc_auth.UnaryServerInterceptor(auth.Auth),
+			interceptor.AuthorizationUnaryServerInterceptor(),
+		)),
+	)
 	pb.RegisterServiceServer(s, &server{})
 
 	log.Println("starting server", port)
