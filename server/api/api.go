@@ -31,6 +31,22 @@ func (s *server) Auth(ctx context.Context, in *messages.AuthRequest) (*messages.
 	}, nil
 }
 
+func (s *server) SignIn(ctx context.Context, in *messages.SignInRequest) (*messages.SignInResponse, error) {
+	return &messages.SignInResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+		Token:      "test",
+	}, nil
+}
+
+func (s *server) SignUp(ctx context.Context, in *messages.SignUpRequest) (*messages.SignUpResponse, error) {
+	return &messages.SignUpResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+		Token:      "test",
+	}, nil
+}
+
 func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.UserResponse, error) {
 	var (
 		user tables.AppUsers
