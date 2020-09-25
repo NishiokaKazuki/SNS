@@ -11,7 +11,7 @@ func main() {
 
 	finish := make(chan bool)
 
-	go api.ListenAndServe("49200")
+	go api.ListenAndServe(":49200")
 
 	<-finish
 }
