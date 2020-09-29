@@ -33,10 +33,34 @@ func (s *server) Auth(ctx context.Context, in *messages.AuthRequest) (*messages.
 
 func (s *server) SignIn(ctx context.Context, in *messages.SignInRequest) (*messages.SignInResponse, error) {
 
+	user, err := qr.GetUserByPass(db.GetDBConnect(), ctx, in.Handle, auth.HashPw(in.Password))
+	if err != nil || user.Id == 0 {
+		return &messages.SignInResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	token := auth.CreateToken(user)
+
+	affected, err := qr.InsertTokens(db.GetDBConnect(), ctx, tables.Tokens{
+		UserId: user.Id,
+		Token:  token,
+	})
+	if err != nil {
+		return &messages.SignInResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unauthenticated, err.Error())
+	}
+	if affected != true {
+		// wip
+	}
+
 	return &messages.SignInResponse{
 		Status:     true,
 		StatusCode: enums.StatusCodes_SUCCESS,
-		Token:      "test",
+		Token:      token,
 	}, nil
 }
 
