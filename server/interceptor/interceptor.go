@@ -13,13 +13,17 @@ import (
 )
 
 const (
-	PermissionAuth = "Auth"
-	PermissionUser = "User"
+	PermissionAuth   = "Auth"
+	PermissionSignIn = "SignIn"
+	PermissionSignUp = "SignUp"
+	PermissionUser   = "User"
 )
 
 var routes = map[string]string{
-	"/pb.Service/Auth": PermissionAuth,
-	"/pb.Service/User": PermissionUser,
+	"/pb.Service/Auth":   PermissionAuth,
+	"/pb.Service/SignIn": PermissionSignIn,
+	"/pb.Service/SignUp": PermissionSignUp,
+	"/pb.Service/User":   PermissionUser,
 }
 
 func AuthorizationUnaryServerInterceptor() grpc.UnaryServerInterceptor {
@@ -35,6 +39,10 @@ func AuthorizationUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		if users.Id == 0 {
 			switch routes[info.FullMethod] {
 			case PermissionAuth:
+				return handler(ctx, req)
+			case PermissionSignIn:
+				return handler(ctx, req)
+			case PermissionSignUp:
 				return handler(ctx, req)
 			default:
 				return nil, status.Error(

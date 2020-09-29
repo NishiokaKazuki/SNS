@@ -42,3 +42,38 @@ func GetUserByToken(engine *xorm.Engine, ctx context.Context, token string) (tab
 
 	return user, err
 }
+
+func GetUserByHandle(engine *xorm.Engine, ctx context.Context, handle string) (tables.AppUsers, error) {
+	var (
+		user tables.AppUsers
+	)
+
+	_, err := engine.Cols(
+		"id",
+	).Where(
+		"handle = ?",
+		handle,
+	).Get(&user)
+	if err != nil {
+		return user, err
+	}
+
+	return user, err
+}
+
+func GetUserByPass(engine *xorm.Engine, ctx context.Context, handle string, password string) (tables.AppUsers, error) {
+	var (
+		user tables.AppUsers
+	)
+
+	_, err := engine.Where(
+		"handle = ? And password = ?",
+		handle,
+		password,
+	).Get(&user)
+	if err != nil {
+		return user, err
+	}
+
+	return user, err
+}

@@ -32,6 +32,7 @@ func (s *server) Auth(ctx context.Context, in *messages.AuthRequest) (*messages.
 }
 
 func (s *server) SignIn(ctx context.Context, in *messages.SignInRequest) (*messages.SignInResponse, error) {
+
 	return &messages.SignInResponse{
 		Status:     true,
 		StatusCode: enums.StatusCodes_SUCCESS,
@@ -40,10 +41,65 @@ func (s *server) SignIn(ctx context.Context, in *messages.SignInRequest) (*messa
 }
 
 func (s *server) SignUp(ctx context.Context, in *messages.SignUpRequest) (*messages.SignUpResponse, error) {
+
+	user, err := qr.GetUserByHandle(db.GetDBConnect(), ctx, in.Handle)
+	if err != nil {
+		return &messages.SignUpResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unauthenticated, err.Error())
+	}
+	if user.Id == 0 {
+		return &messages.SignUpResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.AlreadyExists, "Handle Already Exists")
+	}
+
+	// wip encode
+	affected, err := qr.InsertAppUser(db.GetDBConnect(), ctx, tables.AppUsers{
+		Handle:   in.Handle,
+		Password: auth.HashPw(in.Password),
+		Name:     in.Name,
+	})
+	if err != nil {
+		return &messages.SignUpResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unauthenticated, err.Error())
+	}
+	if affected != true {
+		// wip
+	}
+
+	user, err = qr.GetUserByPass(db.GetDBConnect(), ctx, in.Handle, auth.HashPw(in.Password))
+	if err != nil || user.Id == 0 {
+		return &messages.SignUpResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unauthenticated, err.Error())
+	}
+
+	token := auth.CreateToken(user)
+
+	affected, err = qr.InsertTokens(db.GetDBConnect(), ctx, tables.Tokens{
+		UserId: user.Id,
+		Token:  token,
+	})
+	if err != nil {
+		return &messages.SignUpResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unauthenticated, err.Error())
+	}
+	if affected != true {
+		// wip
+	}
+
 	return &messages.SignUpResponse{
 		Status:     true,
 		StatusCode: enums.StatusCodes_SUCCESS,
-		Token:      "test",
+		Token:      token,
 	}, nil
 }
 
