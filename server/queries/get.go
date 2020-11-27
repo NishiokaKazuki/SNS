@@ -2,6 +2,7 @@ package queries
 
 import (
 	"context"
+	"log"
 	"server/model/tables"
 
 	"github.com/go-xorm/xorm"
@@ -11,7 +12,7 @@ func GetUser(engine *xorm.Engine, ctx context.Context, id uint64) (tables.AppUse
 	var user tables.AppUsers
 
 	_, err := engine.Where(
-		"id = ? and disbled = false",
+		"id = ? and disabled = false",
 		id,
 	).Get(&user)
 
@@ -32,11 +33,14 @@ func GetUserByToken(engine *xorm.Engine, ctx context.Context, token string) (tab
 		return user, err
 	}
 
+	log.Println(tokens)
+
 	_, err = engine.Where(
-		"id = ? and disbled = false",
+		"id = ? and disabled = false",
 		tokens.UserId,
 	).Get(&user)
 	if err != nil {
+		log.Println(err)
 		return user, err
 	}
 
@@ -67,13 +71,10 @@ func GetUserByPass(engine *xorm.Engine, ctx context.Context, handle string, pass
 	)
 
 	_, err := engine.Where(
-		"handle = ? And password = ?",
+		"handle = ? AND password = ?",
 		handle,
 		password,
 	).Get(&user)
-	if err != nil {
-		return user, err
-	}
 
 	return user, err
 }

@@ -6,5 +6,5 @@ version  = "alpha"
 dbms = "mysql"
 user = "kazuki"
 pass = "secret"
-protocol = "tcp(sns-db)"
+protocol = "tcp(localhost:13306)" #sns-db
 dbname = "sns"

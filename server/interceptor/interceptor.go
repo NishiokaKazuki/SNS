@@ -2,6 +2,7 @@ package interceptor
 
 import (
 	"context"
+	"log"
 
 	"server/auth"
 	"server/model/db"
@@ -20,10 +21,10 @@ const (
 )
 
 var routes = map[string]string{
-	"/pb.Service/Auth":   PermissionAuth,
-	"/pb.Service/SignIn": PermissionSignIn,
-	"/pb.Service/SignUp": PermissionSignUp,
-	"/pb.Service/User":   PermissionUser,
+	"/services.Service/Auth":   PermissionAuth,
+	"/services.Service/SignIn": PermissionSignIn,
+	"/services.Service/SignUp": PermissionSignUp,
+	"/services.Service/User":   PermissionUser,
 }
 
 func AuthorizationUnaryServerInterceptor() grpc.UnaryServerInterceptor {
@@ -33,35 +34,30 @@ func AuthorizationUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-		// info.FullMethodにメソッドのフルパスが入っている。
-		users, _ := queries.GetUserByToken(db.GetDBConnect(), ctx, auth.GetToken(ctx).Subject)
 
-		if users.Id == 0 {
-			switch routes[info.FullMethod] {
-			case PermissionAuth:
-				return handler(ctx, req)
-			case PermissionSignIn:
-				return handler(ctx, req)
-			case PermissionSignUp:
-				return handler(ctx, req)
-			default:
-				return nil, status.Error(
-					codes.PermissionDenied,
-					"Please signIn or signUp",
-				)
-			}
-		} else {
-			switch routes[info.FullMethod] {
-			case PermissionAuth:
-				return handler(ctx, req)
-			case PermissionUser:
-				return handler(ctx, req)
-			default:
-				return nil, status.Error(
-					codes.NotFound,
-					"Cannot access"+info.FullMethod,
-				)
-			}
+		if routes[info.FullMethod] == PermissionSignIn ||
+			routes[info.FullMethod] == PermissionSignUp {
+			return handler(ctx, req)
 		}
+
+		token, err := auth.GetToken(ctx)
+		if err != nil {
+			return nil, status.Errorf(
+				codes.Unauthenticated,
+				"could not read auth token: %v",
+				err,
+			)
+		}
+		log.Println(token)
+
+		users, _ := queries.GetUserByToken(db.GetDBConnect(), ctx, token)
+		if users.Id == 0 {
+			return nil, status.Error(
+				codes.PermissionDenied,
+				"Please signIn or signUp",
+			)
+		}
+		return handler(ctx, req)
+
 	}
 }

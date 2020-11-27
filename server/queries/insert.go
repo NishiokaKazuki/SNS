@@ -19,10 +19,15 @@ func InsertAppUser(engine *xorm.Engine, ctx context.Context, appUser tables.AppU
 }
 
 func InsertTokens(engine *xorm.Engine, ctx context.Context, token tables.Tokens) (bool, error) {
-	affected, err := engine.Cols(
-		"user_id",
-		"tokens",
-	).Insert(&token)
+	result, err := engine.Exec("insert into tokens(user_id, token) "+
+		" values(?, ?) "+
+		"on duplicate key update "+
+		"token=?",
+		token.UserId,
+		token.Token,
+		token.Token,
+	)
+	affected, _ := result.RowsAffected()
 
 	return err == nil && affected > 0, err
 }

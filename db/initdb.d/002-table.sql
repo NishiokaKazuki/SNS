@@ -19,8 +19,8 @@ CREATE TABLE app_users
 CREATE TABLE tokens
 (
     id bigint unsigned AUTO_INCREMENT,
-    user_id bigint unsigned NOT NULL,
-    token text NOT NULL,
+    user_id bigint unsigned NOT NULL UNIQUE,
+    token   text NOT NULL,
     created_at       timestamp NOT NULL DEFAULT current_timestamp,
     updated_at       timestamp NOT NULL DEFAULT current_timestamp,
     FOREIGN KEY (user_id)
