@@ -22,15 +22,6 @@ import (
 
 type server struct{}
 
-func (s *server) Auth(ctx context.Context, in *messages.AuthRequest) (*messages.AuthResponse, error) {
-
-	return &messages.AuthResponse{
-		Status:     true,
-		StatusCode: enums.StatusCodes_SUCCESS,
-		Token:      "test",
-	}, nil
-}
-
 func (s *server) SignIn(ctx context.Context, in *messages.SignInRequest) (*messages.SignInResponse, error) {
 
 	user, err := qr.GetUserByPass(db.GetDBConnect(), ctx, in.Handle, auth.HashPw(in.Password))

@@ -7,7 +7,6 @@ import "messages.proto";
 
 
 service Service {
-    rpc Auth (messages.AuthRequest)     returns (messages.AuthResponse) {}
     rpc SignIn (messages.SignInRequest) returns (messages.SignInResponse) {}
     rpc User (messages.UserRequest)     returns (messages.UserResponse) {}
 }

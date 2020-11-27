@@ -5,15 +5,6 @@ option go_package = "server/generated/messages";
 
 import "enums.proto";
 
-message AuthRequest {
-    string token = 1;
-}
-message AuthResponse {
-    bool status = 1;
-    enums.StatusCodes status_code = 2;
-    string token = 3;
-}
-
 message SignUpRequest {
     string handle = 1;
     string password = 2;
