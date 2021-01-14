@@ -2,16 +2,19 @@ package api
 
 import (
 	"context"
+	"io"
 	"log"
 	"net"
 	"server/auth"
 	"server/generated/enums"
 	"server/generated/messages"
+	"server/generated/services"
 	pb "server/generated/services"
 	"server/interceptor"
 	"server/model/db"
 	"server/model/tables"
 	qr "server/queries"
+	"time"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
@@ -145,6 +148,87 @@ func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.
 	}, status.Error(codes.OK, "")
 }
 
+func (s *server) Message(stream services.Service_MessageServer) error {
+	ctx := stream.Context()
+	token, _ := auth.GetToken(ctx)
+	users, _ := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
+	mesFin := make(chan struct{})
+
+	go func() {
+		for {
+			in, err := stream.Recv()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				log.Println(err)
+				break
+			}
+
+			if in.GetBody() == "" {
+				continue
+			}
+			log.Println(in)
+			_, err = qr.InsertMessageLogs(ctx, db.GetDBConnect(), tables.MessageLogs{
+				UserId:  users.Id,
+				IsGroup: !in.GetIsUser(),
+				Body:    in.GetBody(),
+			})
+			if err != nil {
+				log.Println(err)
+				break
+			}
+
+			messageLog, err := qr.GetMessageLogs(ctx, db.GetDBConnect(), tables.MessageLogs{
+				UserId: users.Id,
+			})
+			if err != nil {
+				log.Println(err)
+				break
+			}
+
+			_, err = qr.InsertLogToUsers(ctx, db.GetDBConnect(), tables.LogToUsers{
+				UserId:      in.GetSendId(),
+				LogId:       messageLog.Id,
+				IsConfirmed: false,
+			})
+			if err != nil {
+				log.Println(err)
+				break
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			var logIds []uint64
+			messageLogs, err := qr.FindMessageLogsByUserId(ctx, db.GetDBConnect(), users.Id)
+			if err != nil {
+				log.Println(err)
+			}
+			for _, log := range messageLogs {
+				stream.Send(&messages.MessageResponse{
+					Status:     true,
+					StatusCode: enums.StatusCodes_SUCCESS,
+					Body:       log.Body,
+				})
+				logIds = append(logIds, log.Id)
+			}
+			if len(messageLogs) > 0 {
+				_, err = qr.UpdatelogToUsers(ctx, db.GetDBConnect(), tables.LogToUsers{
+					IsConfirmed: true,
+				}, logIds, users.Id)
+				if err != nil {
+					log.Println(err)
+				}
+			}
+			time.Sleep(time.Second * 1)
+		}
+	}()
+	<-mesFin
+	return nil
+}
+
 func ListenAndServe(port string) {
 	listenPort, err := net.Listen("tcp", port)
 	if err != nil {
@@ -155,7 +239,11 @@ func ListenAndServe(port string) {
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_auth.UnaryServerInterceptor(auth.Auth),
 			interceptor.AuthorizationUnaryServerInterceptor(),
-		)),
+		),
+		),
+		grpc.ChainStreamInterceptor(
+			grpc_auth.StreamServerInterceptor(auth.StreamServerAuthorized),
+		),
 	)
 	pb.RegisterServiceServer(s, &server{})
 

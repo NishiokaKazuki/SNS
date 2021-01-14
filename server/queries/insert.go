@@ -2,6 +2,7 @@ package queries
 
 import (
 	"context"
+	"log"
 	"server/model/tables"
 
 	"github.com/go-xorm/xorm"
@@ -28,6 +29,19 @@ func InsertTokens(engine *xorm.Engine, ctx context.Context, token tables.Tokens)
 		token.Token,
 	)
 	affected, _ := result.RowsAffected()
+
+	return err == nil && affected > 0, err
+}
+
+func InsertMessageLogs(ctx context.Context, engine *xorm.Engine, messageLog tables.MessageLogs) (bool, error) {
+	affected, err := engine.Insert(&messageLog)
+
+	return err == nil && affected > 0, err
+}
+
+func InsertLogToUsers(ctx context.Context, engine *xorm.Engine, logToUser tables.LogToUsers) (bool, error) {
+	affected, err := engine.Insert(&logToUser)
+	log.Println(err)
 
 	return err == nil && affected > 0, err
 }

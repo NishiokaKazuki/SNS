@@ -2,7 +2,6 @@ package interceptor
 
 import (
 	"context"
-	"log"
 
 	"server/auth"
 	"server/model/db"
@@ -34,7 +33,6 @@ func AuthorizationUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		info *grpc.UnaryServerInfo,
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
-
 		if routes[info.FullMethod] == PermissionSignIn ||
 			routes[info.FullMethod] == PermissionSignUp {
 			return handler(ctx, req)
@@ -48,7 +46,6 @@ func AuthorizationUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 				err,
 			)
 		}
-		log.Println(token)
 
 		users, _ := queries.GetUserByToken(db.GetDBConnect(), ctx, token)
 		if users.Id == 0 {
@@ -58,6 +55,5 @@ func AuthorizationUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 			)
 		}
 		return handler(ctx, req)
-
 	}
 }

@@ -41,3 +41,24 @@ message UserResponse {
         bool is_private = 5;
     }
 }
+
+message MessageRequest {
+    bool is_user = 1;
+    uint64 send_id = 2;
+    string body = 3;
+}
+
+message MessageResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+}
+
+message ReceivedRequest {
+}
+
+message ReceivedResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+    string body = 3;
+    uint64 by_user = 4;
+}

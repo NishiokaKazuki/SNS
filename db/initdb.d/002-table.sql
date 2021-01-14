@@ -156,3 +156,72 @@ CREATE TABLE notification_mentions
     FOREIGN KEY (post_id)
     REFERENCES posts(id)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE user_groups
+(
+    id bigint unsigned AUTO_INCREMENT,
+    name text NOT NULL,
+    disabled boolean NOT NULL DEFAULT false,
+    created_at timestamp NOT NULL DEFAULT current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
+    PRIMARY KEY (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE group_to_users
+(
+    group_id bigint unsigned NOT NULL,
+    user_id bigint unsigned NOT NULL,
+    disabled boolean NOT NULL DEFAULT false,
+    created_at timestamp NOT NULL DEFAULT current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
+    FOREIGN KEY (group_id)
+    REFERENCES user_groups(id),
+    FOREIGN KEY (user_id)
+    REFERENCES app_users(id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE message_logs
+(
+    id bigint unsigned AUTO_INCREMENT,
+    user_id bigint unsigned NOT NULL,
+    is_group boolean NOT NULL DEFAULT false,
+    body text NOT NULL,
+    disabled boolean NOT NULL DEFAULT false,
+    created_at timestamp NOT NULL DEFAULT current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
+    FOREIGN KEY (user_id)
+    REFERENCES app_users(id),
+    PRIMARY KEY (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE log_to_users
+(
+    id bigint unsigned AUTO_INCREMENT,
+    user_id bigint unsigned NOT NULL,
+    log_id bigint unsigned NOT NULL,
+    is_confirmed boolean NOT NULL DEFAULT false,
+    disabled boolean NOT NULL DEFAULT false,
+    created_at timestamp NOT NULL DEFAULT current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
+    FOREIGN KEY (user_id)
+    REFERENCES app_users(id),
+    FOREIGN KEY (log_id)
+    REFERENCES message_logs(id),
+    PRIMARY KEY (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE log_to_group
+(
+    id bigint unsigned AUTO_INCREMENT,
+    group_id bigint unsigned NOT NULL,
+    log_id bigint unsigned NOT NULL,
+    is_confirmed boolean NOT NULL DEFAULT false,
+    disabled boolean NOT NULL DEFAULT false,
+    created_at timestamp NOT NULL DEFAULT current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
+    FOREIGN KEY (group_id)
+    REFERENCES user_groups(id),
+    FOREIGN KEY (log_id)
+    REFERENCES message_logs(id),
+    PRIMARY KEY (id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

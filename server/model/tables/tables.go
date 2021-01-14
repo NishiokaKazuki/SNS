@@ -97,3 +97,31 @@ type NotificationMentions struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 }
+
+type UserGroups struct {
+	Id   uint64
+	Name string
+}
+
+type GroupToUsers struct {
+	GroupId uint64
+	UserId  uint64
+}
+
+type MessageLogs struct {
+	Id      uint64
+	UserId  uint64
+	IsGroup bool
+	Body    string
+}
+
+type LogToUsers struct {
+	UserId      uint64
+	LogId       uint64
+	IsConfirmed bool
+}
+
+type LogToGroups struct {
+	GroupId uint64
+	LogId   uint64
+}
