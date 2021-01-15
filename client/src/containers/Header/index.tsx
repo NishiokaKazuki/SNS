@@ -12,9 +12,9 @@ const Header: React.FC = () => {
             <div>
                 <AppBar position="fixed" color="secondary">
                     <Toolbar>
-                        {/* <StyledLink to="/"> */}
+                        <StyledLink to="/">
                             <GitHubIcon />チャット
-                        {/* </StyledLink> */}
+                        </StyledLink>
                     </Toolbar>
                 </AppBar>
             </div>
