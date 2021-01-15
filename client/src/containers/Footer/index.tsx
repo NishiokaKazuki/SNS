@@ -14,9 +14,9 @@ const Footer: React.FC = () => {
             <div>
                 <AppBar position="fixed" color="secondary" className={classes.footer}>
                     <Toolbar>
-                        {/* <StyledLink to="/"> */}
-                            <GitHubIcon />フッター
-                        {/* </StyledLink> */}
+                        <StyledLink to="/signin">
+                            <GitHubIcon />サインイン
+                        </StyledLink>
                     </Toolbar>
                 </AppBar>
             </div>
@@ -31,5 +31,10 @@ const useStyles = makeStyles(() => ({
     }
 }))
 
+const StyledLink = styled(Link)`
+    margin: auto;
+    text-decoration: none;
+    color: white;
+`
 
 export default Footer
