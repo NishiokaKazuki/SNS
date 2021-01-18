@@ -51,4 +51,10 @@ const Root = styled.div`
   padding-bottom: 50px;
 `
 
+const StyledLink = styled(Link)`
+    margin: auto;
+    text-decoration: none;
+    color: white;
+`
+
 export default SignIn
