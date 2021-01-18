@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import DrawerItems from './DrawerItems'
 
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -14,9 +15,7 @@ const Footer: React.FC = () => {
             <div>
                 <AppBar position="fixed" color="secondary" className={classes.footer}>
                     <Toolbar>
-                        <StyledLink to="/signin">
-                            <GitHubIcon />サインイン
-                        </StyledLink>
+                        <DrawerItems/>
                     </Toolbar>
                 </AppBar>
             </div>
