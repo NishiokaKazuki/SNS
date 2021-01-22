@@ -11,6 +11,7 @@ import {
 import Footer from './containers/Footer'
 import SignIn from './containers/SignIn'
 import Header from './containers/Header'
+import Talk   from './containers/Talk'
 import Top    from './containers/Top'
 import ScrollToTop from './containers/Wrapper/ScrollToTop'
 
@@ -23,6 +24,7 @@ const App: React.FC = () => {
           <Main>
             <Switch>
               <Route exact path="/"><Top /></Route>
+              <Route exact path="/talk"><Talk /></Route>
               <Route exact path="/signin"><SignIn /></Route>
             </Switch>
           </Main>
@@ -33,10 +35,10 @@ const App: React.FC = () => {
 }
 
 const Main = styled.main`
-    width: 500px;
-    max-width: 100vw;
     min-height: 100vh;
     margin: 0 auto;
 `
+//     width: 500px;
+//  max-width: 100vw;
 
 export default App;

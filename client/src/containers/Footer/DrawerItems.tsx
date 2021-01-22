@@ -4,9 +4,6 @@ import styled from 'styled-components'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
 
 const DrawerItems: React.FC = () => {
     const classes = useStyles();
@@ -14,22 +11,22 @@ const DrawerItems: React.FC = () => {
     return (
       <>
         <StyledLink to="/">
-            <Button className={classes.button} variant="outlined" size="large">
+            <Button className={classes.button} size="large">
                 MyPage
             </Button>
         </StyledLink>
-        <StyledLink to="/">
-            <Button className={classes.button} variant="outlined" size="large">
+        <StyledLink to="/talk">
+            <Button className={classes.button} size="large">
                 Talk
             </Button>
         </StyledLink>
         <StyledLink to="/">
-            <Button className={classes.button} variant="outlined" size="large">
+            <Button className={classes.button} size="large">
                 TimeLine
             </Button>
         </StyledLink>
         <StyledLink to="/">
-            <Button className={classes.button} variant="outlined" size="large">
+            <Button className={classes.button} size="large">
                 Info
             </Button>
         </StyledLink>
