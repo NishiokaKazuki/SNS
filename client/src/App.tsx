@@ -11,6 +11,7 @@ import {
 import Footer from './containers/Footer'
 import SignIn from './containers/SignIn'
 import Header from './containers/Header'
+import Room   from './containers/Room'
 import Talk   from './containers/Talk'
 import Top    from './containers/Top'
 import ScrollToTop from './containers/Wrapper/ScrollToTop'
@@ -25,6 +26,7 @@ const App: React.FC = () => {
             <Switch>
               <Route exact path="/"><Top /></Route>
               <Route exact path="/talk"><Talk /></Route>
+              <Route exact path="/talk/room"><Room /></Route>
               <Route exact path="/signin"><SignIn /></Route>
             </Switch>
           </Main>

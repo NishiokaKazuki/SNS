@@ -18,7 +18,7 @@ const Header: React.FC = () => {
                         <StyledLink to="/">
                             <GitHubIcon />チャット
                         </StyledLink>
-                        <ButtonLink to="signin">
+                        <ButtonLink to="/signin">
                             <Button className={classes.button}>
                                 SignIn
                             </Button>

@@ -14,7 +14,7 @@ const Talk: React.FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const handleRowClick = (row:any) => {
-    history.push('/talk/room/'+row.link);
+    history.push('/talk/room/');//+row.link
   }
   return(
     <Root>
