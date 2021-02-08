@@ -45,3 +45,10 @@ func InsertLogToUsers(ctx context.Context, engine *xorm.Engine, logToUser tables
 
 	return err == nil && affected > 0, err
 }
+
+func InsertLogToGroup(ctx context.Context, engine *xorm.Engine, logToGroup tables.LogToGroups) (bool, error) {
+	affected, err := engine.Insert(&logToGroup)
+	log.Println(err)
+
+	return err == nil && affected > 0, err
+}

@@ -43,6 +43,8 @@ func main() {
 
 	case "mes":
 		message(ctx, client)
+	case "rec":
+		receive(ctx, client)
 	default:
 		log.Println("not args")
 
@@ -105,35 +107,42 @@ func message(ctx context.Context, client pb.ServiceClient) {
 		log.Println(err)
 	}
 
-	fin := make(chan struct{})
-	go func() {
-		for {
-			in, err := stream.Recv()
-			if err == io.EOF {
-				close(fin)
-				return
-			}
-			if err != nil {
-				log.Fatalln(err)
-			}
-			log.Println(in)
-		}
-	}()
+	for {
+		var send uint64
+		var body string
+		fmt.Scan(&send)
+		fmt.Scan(&body)
+		// お返し
+		stream.Send(&messages.MessageRequest{
+			IsUser: true,
+			SendId: send,
+			Body:   body,
+		})
+	}
+}
 
-	go func() {
-		for {
-			var send uint64
-			var body string
-			fmt.Scan(&send)
-			fmt.Scan(&body)
-			// お返し
-			stream.Send(&messages.MessageRequest{
-				IsUser: true,
-				SendId: send,
-				Body:   body,
-			})
-		}
-	}()
+func receive(ctx context.Context, client pb.ServiceClient) {
+	args := os.Args
+	if len(args) < 3 {
+		log.Fatalln("no more args")
+	}
+	token := args[2]
+	md := metadata.New(map[string]string{"authorization": "Bearer " + token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	<-fin
+	stream, err := client.Receive(ctx, &messages.ReceivedRequest{})
+	if err != nil {
+		log.Println(err)
+	}
+
+	for {
+		in, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		// お返し
+		log.Println(in.GetBody())
+		log.Println(in.GetIsUser())
+		log.Println(in.GetSendId())
+	}
 }

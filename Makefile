@@ -1,6 +1,5 @@
 run-server:
-	cd server &&\
-	go run main.go
+	realize start --server
 
 run-client:
 	cd client &&\

@@ -9,6 +9,6 @@ import "messages.proto";
 service Service {
     rpc SignIn (messages.SignInRequest)   returns (messages.SignInResponse) {}
     rpc User   (messages.UserRequest)     returns (messages.UserResponse) {}
-    rpc Message(messages.MessageRequest)  returns (messages.MessageResponse) {}
-    rpc Message(messages.ReceivedRequest) returns (stream messages.ReceivedResponse) {}
+    rpc Message(stream messages.MessageRequest)  returns (messages.MessageResponse) {}
+    rpc Receive(messages.ReceivedRequest) returns (stream messages.ReceivedResponse) {}
 }

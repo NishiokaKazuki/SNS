@@ -59,6 +59,7 @@ message ReceivedRequest {
 message ReceivedResponse {
     bool status = 1;
     enums.StatusCodes status_code = 2;
-    string body = 3;
-    uint64 by_user = 4;
+    uint64 send_id = 3;
+    string body = 4;
+    bool is_user = 5;
 }

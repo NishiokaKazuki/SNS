@@ -84,3 +84,14 @@ func GetMessageLogs(ctx context.Context, engine *xorm.Engine, messageLog tables.
 
 	return messageLog, err
 }
+
+func GetLogToGroup(ctx context.Context, engine *xorm.Engine, logId uint64) (tables.LogToGroups, error) {
+	var logToGroup tables.LogToGroups
+
+	_, err := engine.Where(
+		"log_id = ?",
+		logId,
+	).Get(&logToGroup)
+
+	return logToGroup, err
+}

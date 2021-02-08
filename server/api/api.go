@@ -152,80 +152,105 @@ func (s *server) Message(stream services.Service_MessageServer) error {
 	ctx := stream.Context()
 	token, _ := auth.GetToken(ctx)
 	users, _ := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
-	mesFin := make(chan struct{})
 
-	go func() {
-		for {
-			in, err := stream.Recv()
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				log.Println(err)
-				break
-			}
+	for {
+		in, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Println(err)
+			break
+		}
 
-			if in.GetBody() == "" {
-				continue
-			}
-			log.Println(in)
-			_, err = qr.InsertMessageLogs(ctx, db.GetDBConnect(), tables.MessageLogs{
-				UserId:  users.Id,
-				IsGroup: !in.GetIsUser(),
-				Body:    in.GetBody(),
+		if in.GetBody() == "" {
+			continue
+		}
+		log.Println(in)
+		_, err = qr.InsertMessageLogs(ctx, db.GetDBConnect(), tables.MessageLogs{
+			UserId:  users.Id,
+			IsGroup: !in.GetIsUser(),
+			Body:    in.GetBody(),
+		})
+
+		messageLog, err := qr.GetMessageLogs(ctx, db.GetDBConnect(), tables.MessageLogs{
+			UserId: users.Id,
+		})
+
+		var userIds []uint64
+		if !in.GetIsUser() {
+			qr.InsertLogToGroup(ctx, db.GetDBConnect(), tables.LogToGroups{
+				GroupId: in.GetSendId(),
+				LogId:   messageLog.Id,
 			})
+			users, err := qr.FindUsersByGroupId(ctx, db.GetDBConnect(), in.GetSendId())
 			if err != nil {
-				log.Println(err)
 				break
 			}
-
-			messageLog, err := qr.GetMessageLogs(ctx, db.GetDBConnect(), tables.MessageLogs{
-				UserId: users.Id,
-			})
-			if err != nil {
-				log.Println(err)
-				break
+			for _, u := range users {
+				userIds = append(userIds, u.Id)
 			}
+		} else {
+			userIds = append(userIds, in.GetSendId())
+		}
 
-			_, err = qr.InsertLogToUsers(ctx, db.GetDBConnect(), tables.LogToUsers{
-				UserId:      in.GetSendId(),
+		for _, id := range userIds {
+			qr.InsertLogToUsers(ctx, db.GetDBConnect(), tables.LogToUsers{
+				UserId:      id,
 				LogId:       messageLog.Id,
 				IsConfirmed: false,
 			})
+		}
+	}
+
+	return nil
+}
+
+func (s *server) Receive(req *messages.ReceivedRequest, stream pb.Service_ReceiveServer) error {
+	ctx := stream.Context()
+	token, _ := auth.GetToken(ctx)
+	users, _ := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
+
+	for {
+		var logIds []uint64
+		messageLogs, err := qr.FindMessageLogsByUserId(ctx, db.GetDBConnect(), users.Id)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+		for _, log := range messageLogs {
+			var id uint64
+			if log.IsGroup {
+				logToGroup, _ := qr.GetLogToGroup(ctx, db.GetDBConnect(), log.Id)
+				id = logToGroup.GroupId
+			} else {
+				id = log.UserId
+			}
+
+			err = stream.Send(&messages.ReceivedResponse{
+				Status:     true,
+				StatusCode: enums.StatusCodes_SUCCESS,
+				Body:       log.Body,
+				IsUser:     !log.IsGroup,
+				SendId:     id,
+			})
 			if err != nil {
-				log.Println(err)
 				break
 			}
+			logIds = append(logIds, log.Id)
 		}
-	}()
+		if err != nil {
+			break
+		}
 
-	go func() {
-		for {
-			var logIds []uint64
-			messageLogs, err := qr.FindMessageLogsByUserId(ctx, db.GetDBConnect(), users.Id)
-			if err != nil {
-				log.Println(err)
-			}
-			for _, log := range messageLogs {
-				stream.Send(&messages.MessageResponse{
-					Status:     true,
-					StatusCode: enums.StatusCodes_SUCCESS,
-					Body:       log.Body,
-				})
-				logIds = append(logIds, log.Id)
-			}
-			if len(messageLogs) > 0 {
-				_, err = qr.UpdatelogToUsers(ctx, db.GetDBConnect(), tables.LogToUsers{
-					IsConfirmed: true,
-				}, logIds, users.Id)
-				if err != nil {
-					log.Println(err)
-				}
-			}
-			time.Sleep(time.Second * 1)
+		if len(messageLogs) > 0 {
+			_, err = qr.UpdatelogToUsers(ctx, db.GetDBConnect(), tables.LogToUsers{
+				IsConfirmed: true,
+			}, logIds, users.Id)
 		}
-	}()
-	<-mesFin
+		time.Sleep(time.Second * 1)
+	}
+
 	return nil
 }
 

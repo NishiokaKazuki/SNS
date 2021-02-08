@@ -22,3 +22,20 @@ func FindMessageLogsByUserId(ctx context.Context, engine *xorm.Engine, userId ui
 
 	return messageLogs, err
 }
+
+func FindUsersByGroupId(ctx context.Context, engine *xorm.Engine, groupId uint64) ([]tables.AppUsers, error) {
+	var (
+		users []tables.AppUsers
+	)
+
+	engine.Alias("u").Join(
+		"INNER",
+		[]string{"group_to_users", "g"},
+		"g.group_id = ?",
+		groupId,
+	).Where(
+		"u.id = g.UserId",
+	).Find(&users)
+
+	return users, nil
+}
