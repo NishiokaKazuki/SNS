@@ -121,6 +121,109 @@ func (s *server) SignUp(ctx context.Context, in *messages.SignUpRequest) (*messa
 	}, nil
 }
 
+func (s *server) CreateGroup(ctx context.Context, in *messages.CreateGroupRequest) (*messages.CreateGroupResponse, error) {
+	user, err := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	affected, err := qr.InsertUserGroup(ctx, db.GetDBConnect(), tables.UserGroups{
+		Name: in.GetGroup().Name,
+	})
+	if err != nil {
+		log.Println(affected)
+		return &messages.CreateGroupResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+			Group:      &messages.UserGroup{},
+		}, status.Error(codes.ResourceExhausted, err.Error())
+	}
+
+	userGroup, _ := qr.GetUserGroupByName(ctx, db.GetDBConnect(), in.GetGroup().Name)
+	affected, err = qr.InsertGroupToUser(ctx, db.GetDBConnect(), tables.GroupToUsers{
+		GroupId: userGroup.Id,
+		UserId:  user.Id,
+	})
+	if err != nil {
+		log.Println(affected)
+		return &messages.CreateGroupResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+			Group:      &messages.UserGroup{},
+		}, status.Error(codes.ResourceExhausted, err.Error())
+	}
+
+	return &messages.CreateGroupResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+		Group:      &messages.UserGroup{},
+	}, nil
+}
+
+func (s *server) GetGroups(ctx context.Context, in *messages.GetGroupsRequest) (*messages.GetGroupsResponse, error) {
+	var groups []*messages.UserGroup
+
+	user, _ := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	userGroups, err := qr.FindUserGroupsByUserId(ctx, db.GetDBConnect(), user.Id)
+	if err != nil {
+		return &messages.GetGroupsResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unavailable, err.Error())
+	}
+
+	for _, g := range userGroups {
+		var (
+			groupUsers  []*messages.AppUser
+			inviteUsers []*messages.AppUser
+		)
+
+		iu, err := qr.FindAppUsersByInvitesGroupId(ctx, db.GetDBConnect(), g.Id)
+		if err != nil {
+			return &messages.GetGroupsResponse{
+				Status:     false,
+				StatusCode: enums.StatusCodes_FAILED_AUTH,
+			}, status.Error(codes.Unavailable, err.Error())
+		}
+		au, err := qr.FindAppUsersByGroupId(ctx, db.GetDBConnect(), g.Id)
+		if err != nil {
+			return &messages.GetGroupsResponse{
+				Status:     false,
+				StatusCode: enums.StatusCodes_FAILED_AUTH,
+			}, status.Error(codes.Unavailable, err.Error())
+		}
+		for _, i := range iu {
+			inviteUsers = append(inviteUsers, &messages.AppUser{
+				Id:        i.Id,
+				Handle:    i.Handle,
+				Name:      i.Name,
+				Birthday:  i.Birthday.String(),
+				Profile:   i.Profile,
+				IsPrivate: i.IsPrivate,
+			})
+		}
+		for _, i := range au {
+			groupUsers = append(inviteUsers, &messages.AppUser{
+				Id:        i.Id,
+				Handle:    i.Handle,
+				Name:      i.Name,
+				Birthday:  i.Birthday.String(),
+				Profile:   i.Profile,
+				IsPrivate: i.IsPrivate,
+			})
+		}
+
+		groups = append(groups, &messages.UserGroup{
+			Id:           g.Id,
+			Name:         g.Name,
+			Users:        groupUsers,
+			InvitedUsers: inviteUsers,
+		})
+	}
+
+	return &messages.GetGroupsResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+		Groups:     groups,
+	}, nil
+}
+
 func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.UserResponse, error) {
 	var (
 		user tables.AppUsers
@@ -131,14 +234,14 @@ func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.
 		return &messages.UserResponse{
 			Status:     false,
 			StatusCode: enums.StatusCodes_FAILED,
-			User:       &messages.UserResponse_AppUser{},
+			User:       &messages.AppUser{},
 		}, status.Error(codes.NotFound, err.Error())
 	}
 
 	return &messages.UserResponse{
 		Status:     true,
 		StatusCode: enums.StatusCodes_SUCCESS,
-		User: &messages.UserResponse_AppUser{
+		User: &messages.AppUser{
 			Handle:    user.Handle,
 			Name:      user.Name,
 			Birthday:  user.Birthday.String(),
@@ -183,7 +286,7 @@ func (s *server) Message(stream services.Service_MessageServer) error {
 				GroupId: in.GetSendId(),
 				LogId:   messageLog.Id,
 			})
-			users, err := qr.FindUsersByGroupId(ctx, db.GetDBConnect(), in.GetSendId())
+			users, err := qr.FindAppUsersByGroupId(ctx, db.GetDBConnect(), in.GetSendId())
 			if err != nil {
 				break
 			}

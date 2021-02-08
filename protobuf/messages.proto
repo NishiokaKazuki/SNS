@@ -26,6 +26,41 @@ message SignInResponse {
     string token = 3;
 }
 
+message AppUser {
+    uint64 id = 1;
+    string handle =2;
+    string name = 3;
+    string birthday = 4;
+    string profile = 5;
+    bool is_private = 6;
+}
+
+message UserGroup {
+    uint64 id = 1;
+    string name = 2;
+    repeated AppUser users = 3;
+    repeated AppUser invited_users = 4;
+}
+
+message CreateGroupRequest {
+    string token = 1;
+    UserGroup group = 2;
+}
+message CreateGroupResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+    UserGroup group = 3;
+}
+
+message GetGroupsRequest {
+    string token = 1;
+}
+message GetGroupsResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+    repeated UserGroup groups = 3;
+}
+
 message UserRequest {
     string token = 1;
 }
@@ -33,13 +68,6 @@ message UserResponse {
     bool status = 1;
     enums.StatusCodes status_code = 2;
     AppUser user = 3;
-    message AppUser {
-        string handle = 1;
-        string name = 2;
-        string birthday = 3;
-        string profile = 4;
-        bool is_private = 5;
-    }
 }
 
 message MessageRequest {

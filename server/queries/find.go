@@ -23,7 +23,7 @@ func FindMessageLogsByUserId(ctx context.Context, engine *xorm.Engine, userId ui
 	return messageLogs, err
 }
 
-func FindUsersByGroupId(ctx context.Context, engine *xorm.Engine, groupId uint64) ([]tables.AppUsers, error) {
+func FindAppUsersByGroupId(ctx context.Context, engine *xorm.Engine, groupId uint64) ([]tables.AppUsers, error) {
 	var (
 		users []tables.AppUsers
 	)
@@ -35,6 +35,38 @@ func FindUsersByGroupId(ctx context.Context, engine *xorm.Engine, groupId uint64
 		groupId,
 	).Where(
 		"u.id = g.UserId",
+	).Find(&users)
+
+	return users, nil
+}
+
+func FindUserGroupsByUserId(ctx context.Context, engine *xorm.Engine, userId uint64) ([]tables.UserGroups, error) {
+	var (
+		groups []tables.UserGroups
+	)
+
+	engine.Alias("u").Join(
+		"INNER",
+		[]string{"group_to_users", "g"},
+		"g.user_id = ?",
+		userId,
+	).Where(
+		"u.id = g.group_Id",
+	).Find(&groups)
+
+	return groups, nil
+}
+
+func FindAppUsersByInvitesGroupId(ctx context.Context, engine *xorm.Engine, groupId uint64) ([]tables.AppUsers, error) {
+	var users []tables.AppUsers
+
+	engine.Alias("u").Join(
+		"INNER",
+		[]string{"invite_user_to_groups", "i"},
+		"i.group_id = ?",
+		groupId,
+	).Where(
+		"u.id = i.user_id",
 	).Find(&users)
 
 	return users, nil

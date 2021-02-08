@@ -95,3 +95,14 @@ func GetLogToGroup(ctx context.Context, engine *xorm.Engine, logId uint64) (tabl
 
 	return logToGroup, err
 }
+
+func GetUserGroupByName(ctx context.Context, engine *xorm.Engine, name string) (tables.UserGroups, error) {
+	var userGroups tables.UserGroups
+
+	_, err := engine.Where(
+		"name = ?",
+		name,
+	).Desc("id").Get(&userGroups)
+
+	return userGroups, err
+}

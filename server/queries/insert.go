@@ -2,7 +2,6 @@ package queries
 
 import (
 	"context"
-	"log"
 	"server/model/tables"
 
 	"github.com/go-xorm/xorm"
@@ -41,14 +40,20 @@ func InsertMessageLogs(ctx context.Context, engine *xorm.Engine, messageLog tabl
 
 func InsertLogToUsers(ctx context.Context, engine *xorm.Engine, logToUser tables.LogToUsers) (bool, error) {
 	affected, err := engine.Insert(&logToUser)
-	log.Println(err)
-
 	return err == nil && affected > 0, err
 }
 
 func InsertLogToGroup(ctx context.Context, engine *xorm.Engine, logToGroup tables.LogToGroups) (bool, error) {
 	affected, err := engine.Insert(&logToGroup)
-	log.Println(err)
+	return err == nil && affected > 0, err
+}
 
+func InsertUserGroup(ctx context.Context, engine *xorm.Engine, group tables.UserGroups) (bool, error) {
+	affected, err := engine.Insert(&group)
+	return err == nil && affected > 0, err
+}
+
+func InsertGroupToUser(ctx context.Context, engine *xorm.Engine, GroupToUsers tables.GroupToUsers) (bool, error) {
+	affected, err := engine.Insert(&GroupToUsers)
 	return err == nil && affected > 0, err
 }

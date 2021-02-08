@@ -180,6 +180,19 @@ CREATE TABLE group_to_users
     REFERENCES app_users(id)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+CREATE TABLE invite_user_to_groups
+(
+    group_id bigint unsigned NOT NULL,
+    user_id bigint unsigned NOT NULL,
+    disabled boolean NOT NULL DEFAULT false,
+    created_at timestamp NOT NULL DEFAULT current_timestamp,
+    updated_at timestamp NOT NULL DEFAULT current_timestamp,
+    FOREIGN KEY (group_id)
+    REFERENCES user_groups(id),
+    FOREIGN KEY (user_id)
+    REFERENCES app_users(id)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
 CREATE TABLE message_logs
 (
     id bigint unsigned AUTO_INCREMENT,

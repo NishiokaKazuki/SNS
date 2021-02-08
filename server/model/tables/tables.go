@@ -108,6 +108,11 @@ type GroupToUsers struct {
 	UserId  uint64
 }
 
+type InviteUserToGroups struct {
+	GroupId uint64
+	UserId  uint64
+}
+
 type MessageLogs struct {
 	Id      uint64
 	UserId  uint64

@@ -7,8 +7,10 @@ import "messages.proto";
 
 
 service Service {
-    rpc SignIn (messages.SignInRequest)   returns (messages.SignInResponse) {}
-    rpc User   (messages.UserRequest)     returns (messages.UserResponse) {}
-    rpc Message(stream messages.MessageRequest)  returns (messages.MessageResponse) {}
-    rpc Receive(messages.ReceivedRequest) returns (stream messages.ReceivedResponse) {}
+    rpc SignIn      (messages.SignInRequest)   returns (messages.SignInResponse) {}
+    rpc User        (messages.UserRequest)     returns (messages.UserResponse) {}
+    rpc CreateGroup (messages.CreateGroupRequest) returns (messages.CreateGroupResponse) {}
+    rpc GetGroups (messages.GetGroupsRequest) returns (messages.GetGroupsResponse) {}
+    rpc Message     (stream messages.MessageRequest)  returns (messages.MessageResponse) {}
+    rpc Receive     (messages.ReceivedRequest) returns (stream messages.ReceivedResponse) {}
 }

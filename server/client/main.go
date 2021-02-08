@@ -45,6 +45,8 @@ func main() {
 		message(ctx, client)
 	case "rec":
 		receive(ctx, client)
+	case "createGroup":
+		createGroup(ctx, client)
 	default:
 		log.Println("not args")
 
@@ -61,6 +63,28 @@ func user(ctx context.Context, client pb.ServiceClient) {
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	res, err := client.User(ctx, &messages.UserRequest{
 		Token: "not used",
+	})
+
+	if err == nil {
+		log.Println(res)
+	} else {
+		log.Println(err)
+	}
+}
+
+func createGroup(ctx context.Context, client pb.ServiceClient) {
+	args := os.Args
+	if len(args) < 3 {
+		log.Fatalln("no more args")
+	}
+	token := args[2]
+	md := metadata.New(map[string]string{"authorization": "Bearer " + token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+	res, err := client.CreateGroup(ctx, &messages.CreateGroupRequest{
+		Token: token,
+		Group: &messages.UserGroup{
+			Name: args[3],
+		},
 	})
 
 	if err == nil {
