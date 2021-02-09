@@ -53,6 +53,8 @@ func GetUserByHandle(engine *xorm.Engine, ctx context.Context, handle string) (t
 	).Where(
 		"handle = ?",
 		handle,
+	).And(
+		"disabled = false",
 	).Get(&user)
 	if err != nil {
 		return user, err
@@ -70,6 +72,8 @@ func GetUserByPass(engine *xorm.Engine, ctx context.Context, handle string, pass
 		"handle = ? AND password = ?",
 		handle,
 		password,
+	).And(
+		"disabled = false",
 	).Get(&user)
 
 	return user, err
@@ -80,6 +84,8 @@ func GetMessageLogs(ctx context.Context, engine *xorm.Engine, messageLog tables.
 	_, err := engine.Where(
 		"user_id = ?",
 		messageLog.UserId,
+	).And(
+		"disabled = false",
 	).Desc("id").Get(&messageLog)
 
 	return messageLog, err
@@ -91,6 +97,8 @@ func GetLogToGroup(ctx context.Context, engine *xorm.Engine, logId uint64) (tabl
 	_, err := engine.Where(
 		"log_id = ?",
 		logId,
+	).And(
+		"disabled = false",
 	).Get(&logToGroup)
 
 	return logToGroup, err
@@ -102,7 +110,33 @@ func GetUserGroupByName(ctx context.Context, engine *xorm.Engine, name string) (
 	_, err := engine.Where(
 		"name = ?",
 		name,
+	).And(
+		"disabled = false",
 	).Desc("id").Get(&userGroups)
 
 	return userGroups, err
+}
+
+func GetUserGroupByInviteUserToGroup(ctx context.Context, engine *xorm.Engine, invite tables.InviteUserToGroups) (tables.UserGroups, error) {
+	var (
+		groups tables.UserGroups
+	)
+
+	engine.Alias("u").Join(
+		"INNER",
+		[]string{"invite_user_to_groups", "g"},
+		"g.user_id = ?",
+		invite.UserId,
+	).Where(
+		"u.id = g.group_id",
+	).And(
+		"g.group_id = ?",
+		invite.GroupId,
+	).And(
+		"g.disabled = false",
+	).And(
+		"u.disabled = false",
+	).Get(&groups)
+
+	return groups, nil
 }

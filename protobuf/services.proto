@@ -12,6 +12,7 @@ service Service {
     rpc CreateGroup (messages.CreateGroupRequest) returns (messages.CreateGroupResponse) {}
     rpc GetGroups (messages.GetGroupsRequest) returns (messages.GetGroupsResponse) {}
     rpc GetInvitedGroups (messages.GetInvitedGroupsRequest) returns (messages.GetInvitedGroupsResponse) {}
+    rpc JoinInvitedGroups (messages.JoinInvitedGroupsRequest) returns (messages.JoinInvitedGroupsResponse) {}
     rpc Message     (stream messages.MessageRequest)  returns (messages.MessageResponse) {}
     rpc Receive     (messages.ReceivedRequest) returns (stream messages.ReceivedResponse) {}
 }

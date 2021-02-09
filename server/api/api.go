@@ -292,11 +292,61 @@ func (s *server) GetInvitedGroups(ctx context.Context, in *messages.GetInvitedGr
 	}, nil
 }
 
-func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.UserResponse, error) {
-	var (
-		user tables.AppUsers
-	)
+func (s *server) JoinInvitedGroups(ctx context.Context, in *messages.JoinInvitedGroupsRequest) (*messages.JoinInvitedGroupsResponse, error) {
+	user, err := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	if err != nil {
+		return &messages.JoinInvitedGroupsResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+		}, status.Error(codes.NotFound, err.Error())
+	}
 
+	group, err := qr.GetUserGroupByInviteUserToGroup(ctx, db.GetDBConnect(), tables.InviteUserToGroups{
+		UserId:  user.Id,
+		GroupId: in.GetGroupId(),
+	})
+	if err != nil {
+		return &messages.JoinInvitedGroupsResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+		}, status.Error(codes.PermissionDenied, err.Error())
+	}
+	if group.Id != in.GetGroupId() {
+		return &messages.JoinInvitedGroupsResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+		}, status.Error(codes.PermissionDenied, err.Error())
+	}
+
+	affected, err := qr.DeleteInviteUserToGroupByUserId(ctx, db.GetDBConnect(), tables.InviteUserToGroups{
+		UserId:  user.Id,
+		GroupId: in.GetGroupId(),
+	})
+	if affected != true {
+		return &messages.JoinInvitedGroupsResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+		}, status.Error(codes.PermissionDenied, err.Error())
+	}
+	if err != nil {
+		return &messages.JoinInvitedGroupsResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+		}, status.Error(codes.PermissionDenied, err.Error())
+	}
+
+	qr.InsertGroupToUser(ctx, db.GetDBConnect(), tables.GroupToUsers{
+		UserId:  user.Id,
+		GroupId: in.GetGroupId(),
+	})
+
+	return &messages.JoinInvitedGroupsResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+	}, nil
+}
+
+func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.UserResponse, error) {
 	user, err := qr.GetUser(db.GetDBConnect(), ctx, 1)
 	if err != nil {
 		return &messages.UserResponse{

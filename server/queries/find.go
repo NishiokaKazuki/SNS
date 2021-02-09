@@ -18,6 +18,8 @@ func FindMessageLogsByUserId(ctx context.Context, engine *xorm.Engine, userId ui
 		"m.id = l.log_id",
 	).And(
 		"m.disabled = false",
+	).And(
+		"l.disabled = false",
 	).Find(&messageLogs)
 
 	return messageLogs, err
@@ -35,6 +37,10 @@ func FindAppUsersByGroupId(ctx context.Context, engine *xorm.Engine, groupId uin
 		groupId,
 	).Where(
 		"u.id = g.UserId",
+	).And(
+		"u.disabled = false",
+	).And(
+		"g.disabled = false",
 	).Find(&users)
 
 	return users, nil
@@ -52,6 +58,10 @@ func FindUserGroupsByUserId(ctx context.Context, engine *xorm.Engine, userId uin
 		userId,
 	).Where(
 		"u.id = g.group_Id",
+	).And(
+		"u.disabled = false",
+	).And(
+		"g.disabled = false",
 	).Find(&groups)
 
 	return groups, nil
@@ -67,6 +77,10 @@ func FindAppUsersByInvitesGroupId(ctx context.Context, engine *xorm.Engine, grou
 		groupId,
 	).Where(
 		"u.id = i.user_id",
+	).And(
+		"u.disabled = false",
+	).And(
+		"i.disabled = false",
 	).Find(&users)
 
 	return users, nil
@@ -83,7 +97,11 @@ func FindInviteUserToGroupsByUserId(ctx context.Context, engine *xorm.Engine, us
 		"g.user_id = ?",
 		userId,
 	).Where(
-		"u.id = g.group_Id",
+		"u.id = g.group_id",
+	).And(
+		"u.disabled = false",
+	).And(
+		"g.disabled = false",
 	).Find(&groups)
 
 	return groups, nil

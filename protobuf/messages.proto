@@ -70,6 +70,15 @@ message GetInvitedGroupsResponse {
     repeated UserGroup groups = 3;
 }
 
+message JoinInvitedGroupsRequest {
+    string token = 1;
+    uint64 group_id = 2;
+}
+message JoinInvitedGroupsResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+}
+
 message UserRequest {
     string token = 1;
 }
