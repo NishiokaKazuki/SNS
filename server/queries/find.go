@@ -71,3 +71,20 @@ func FindAppUsersByInvitesGroupId(ctx context.Context, engine *xorm.Engine, grou
 
 	return users, nil
 }
+
+func FindInviteUserToGroupsByUserId(ctx context.Context, engine *xorm.Engine, userId uint64) ([]tables.UserGroups, error) {
+	var (
+		groups []tables.UserGroups
+	)
+
+	engine.Alias("u").Join(
+		"INNER",
+		[]string{"invite_user_to_groups", "g"},
+		"g.user_id = ?",
+		userId,
+	).Where(
+		"u.id = g.group_Id",
+	).Find(&groups)
+
+	return groups, nil
+}

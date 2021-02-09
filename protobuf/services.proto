@@ -11,6 +11,7 @@ service Service {
     rpc User        (messages.UserRequest)     returns (messages.UserResponse) {}
     rpc CreateGroup (messages.CreateGroupRequest) returns (messages.CreateGroupResponse) {}
     rpc GetGroups (messages.GetGroupsRequest) returns (messages.GetGroupsResponse) {}
+    rpc GetInvitedGroups (messages.GetInvitedGroupsRequest) returns (messages.GetInvitedGroupsResponse) {}
     rpc Message     (stream messages.MessageRequest)  returns (messages.MessageResponse) {}
     rpc Receive     (messages.ReceivedRequest) returns (stream messages.ReceivedResponse) {}
 }

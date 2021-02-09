@@ -224,6 +224,74 @@ func (s *server) GetGroups(ctx context.Context, in *messages.GetGroupsRequest) (
 	}, nil
 }
 
+func (s *server) GetInvitedGroups(ctx context.Context, in *messages.GetInvitedGroupsRequest) (*messages.GetInvitedGroupsResponse, error) {
+	var groups []*messages.UserGroup
+
+	user, _ := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	userGroups, err := qr.FindInviteUserToGroupsByUserId(ctx, db.GetDBConnect(), user.Id)
+	if err != nil {
+		return &messages.GetInvitedGroupsResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED_AUTH,
+		}, status.Error(codes.Unavailable, err.Error())
+	}
+
+	for _, g := range userGroups {
+		var (
+			groupUsers  []*messages.AppUser
+			inviteUsers []*messages.AppUser
+		)
+
+		iu, err := qr.FindAppUsersByInvitesGroupId(ctx, db.GetDBConnect(), g.Id)
+		if err != nil {
+			return &messages.GetInvitedGroupsResponse{
+				Status:     false,
+				StatusCode: enums.StatusCodes_FAILED_AUTH,
+			}, status.Error(codes.Unavailable, err.Error())
+		}
+		au, err := qr.FindAppUsersByGroupId(ctx, db.GetDBConnect(), g.Id)
+		if err != nil {
+			return &messages.GetInvitedGroupsResponse{
+				Status:     false,
+				StatusCode: enums.StatusCodes_FAILED_AUTH,
+			}, status.Error(codes.Unavailable, err.Error())
+		}
+		for _, i := range iu {
+			inviteUsers = append(inviteUsers, &messages.AppUser{
+				Id:        i.Id,
+				Handle:    i.Handle,
+				Name:      i.Name,
+				Birthday:  i.Birthday.String(),
+				Profile:   i.Profile,
+				IsPrivate: i.IsPrivate,
+			})
+		}
+		for _, i := range au {
+			groupUsers = append(inviteUsers, &messages.AppUser{
+				Id:        i.Id,
+				Handle:    i.Handle,
+				Name:      i.Name,
+				Birthday:  i.Birthday.String(),
+				Profile:   i.Profile,
+				IsPrivate: i.IsPrivate,
+			})
+		}
+
+		groups = append(groups, &messages.UserGroup{
+			Id:           g.Id,
+			Name:         g.Name,
+			Users:        groupUsers,
+			InvitedUsers: inviteUsers,
+		})
+	}
+
+	return &messages.GetInvitedGroupsResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+		Groups:     groups,
+	}, nil
+}
+
 func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.UserResponse, error) {
 	var (
 		user tables.AppUsers

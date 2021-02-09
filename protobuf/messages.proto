@@ -61,6 +61,15 @@ message GetGroupsResponse {
     repeated UserGroup groups = 3;
 }
 
+message GetInvitedGroupsRequest {
+    string token = 1;
+}
+message GetInvitedGroupsResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+    repeated UserGroup groups = 3;
+}
+
 message UserRequest {
     string token = 1;
 }
