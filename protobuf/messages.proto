@@ -79,6 +79,16 @@ message JoinInvitedGroupsResponse {
     enums.StatusCodes status_code = 2;
 }
 
+message InviteToGroupRequest {
+    string token = 1;
+    uint64 group_id = 2;
+    uint64 user_id  =3;
+}
+message InviteToGroupResponse {
+    bool status = 1;
+    enums.StatusCodes status_code = 2;
+}
+
 message UserRequest {
     string token = 1;
 }

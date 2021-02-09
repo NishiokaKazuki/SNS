@@ -346,6 +346,18 @@ func (s *server) JoinInvitedGroups(ctx context.Context, in *messages.JoinInvited
 	}, nil
 }
 
+func (s *server) InviteToGroup(ctx context.Context, in *messages.InviteToGroupRequest) (*messages.InviteToGroupResponse, error) {
+	qr.InsertInviteUserToGroup(ctx, db.GetDBConnect(), tables.InviteUserToGroups{
+		GroupId: in.GetGroupId(),
+		UserId:  in.GetUserId(),
+	})
+
+	return &messages.InviteToGroupResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+	}, nil
+}
+
 func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.UserResponse, error) {
 	user, err := qr.GetUser(db.GetDBConnect(), ctx, 1)
 	if err != nil {

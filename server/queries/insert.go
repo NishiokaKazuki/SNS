@@ -57,3 +57,8 @@ func InsertGroupToUser(ctx context.Context, engine *xorm.Engine, GroupToUsers ta
 	affected, err := engine.Insert(&GroupToUsers)
 	return err == nil && affected > 0, err
 }
+
+func InsertInviteUserToGroup(ctx context.Context, engine *xorm.Engine, invite tables.InviteUserToGroups) (bool, error) {
+	affected, err := engine.Insert(&invite)
+	return err == nil && affected > 0, err
+}
