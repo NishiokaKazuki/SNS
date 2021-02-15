@@ -106,3 +106,38 @@ func FindInviteUserToGroupsByUserId(ctx context.Context, engine *xorm.Engine, us
 
 	return groups, nil
 }
+
+func FindToFollows(ctx context.Context, engine *xorm.Engine, userId uint64) ([]tables.ToFollows, error) {
+	var follows []tables.ToFollows
+
+	engine.Where(
+		"to_user = ? OR by_user = ?",
+		userId,
+		userId,
+	).And(
+		"permission = 1",
+	).Find(&follows)
+
+	return follows, nil
+}
+
+func FindAppUsersByToFollows(ctx context.Context, engine *xorm.Engine, userId uint64) ([]tables.AppUsers, error) {
+	var appUsers []tables.AppUsers
+
+	engine.Alias("u").Join(
+		"INNER",
+		[]string{"to_follows", "f"},
+		"(f.to_user = ? OR f.by_user = ?) AND f.permission = 1",
+		userId,
+		userId,
+	).Where(
+		"(u.id = f.to_user AND f.to_user != ?) OR "+
+			"(u.id = f.by_user AND f.by_user != ?)",
+		userId,
+		userId,
+	).And(
+		"disabled = false",
+	).Find(&appUsers)
+
+	return appUsers, nil
+}

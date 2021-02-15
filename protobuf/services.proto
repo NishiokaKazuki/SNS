@@ -10,6 +10,7 @@ service Service {
     rpc SignIn      (messages.SignInRequest)   returns (messages.SignInResponse) {}
     rpc User        (messages.UserRequest)     returns (messages.UserResponse) {}
     rpc CreateGroup (messages.CreateGroupRequest) returns (messages.CreateGroupResponse) {}
+    rpc Followers   (messages.FollowersRequest) returns (messages.FollowersResponse) {}
     rpc GetGroups (messages.GetGroupsRequest) returns (messages.GetGroupsResponse) {}
     rpc GetInvitedGroups (messages.GetInvitedGroupsRequest) returns (messages.GetInvitedGroupsResponse) {}
     rpc JoinInvitedGroups (messages.JoinInvitedGroupsRequest) returns (messages.JoinInvitedGroupsResponse) {}

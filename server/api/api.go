@@ -122,7 +122,8 @@ func (s *server) SignUp(ctx context.Context, in *messages.SignUpRequest) (*messa
 }
 
 func (s *server) CreateGroup(ctx context.Context, in *messages.CreateGroupRequest) (*messages.CreateGroupResponse, error) {
-	user, err := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	token, _ := auth.GetToken(ctx)
+	user, _ := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
 	affected, err := qr.InsertUserGroup(ctx, db.GetDBConnect(), tables.UserGroups{
 		Name: in.GetGroup().Name,
 	})
@@ -156,10 +157,41 @@ func (s *server) CreateGroup(ctx context.Context, in *messages.CreateGroupReques
 	}, nil
 }
 
+func (s *server) Followers(ctx context.Context, in *messages.FollowersRequest) (*messages.FollowersResponse, error) {
+	var appUsers []*messages.AppUser
+	token, _ := auth.GetToken(ctx)
+	user, _ := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
+
+	users, err := qr.FindAppUsersByToFollows(ctx, db.GetDBConnect(), user.Id)
+	if err != nil {
+		return &messages.FollowersResponse{
+			Status:     false,
+			StatusCode: enums.StatusCodes_FAILED,
+		}, status.Error(codes.ResourceExhausted, err.Error())
+	}
+
+	for _, u := range users {
+		appUsers = append(appUsers, &messages.AppUser{
+			Id:        u.Id,
+			Handle:    u.Handle,
+			Name:      u.Name,
+			Birthday:  u.Birthday.Format(),
+			Profile:   u.Profile,
+			IsPrivate: u.IsPrivate,
+		})
+	}
+	return &messages.FollowersResponse{
+		Status:     true,
+		StatusCode: enums.StatusCodes_SUCCESS,
+		AppUsers:   appUsers,
+	}, nil
+}
+
 func (s *server) GetGroups(ctx context.Context, in *messages.GetGroupsRequest) (*messages.GetGroupsResponse, error) {
 	var groups []*messages.UserGroup
 
-	user, _ := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	token, _ := auth.GetToken(ctx)
+	user, _ := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
 	userGroups, err := qr.FindUserGroupsByUserId(ctx, db.GetDBConnect(), user.Id)
 	if err != nil {
 		return &messages.GetGroupsResponse{
@@ -227,7 +259,8 @@ func (s *server) GetGroups(ctx context.Context, in *messages.GetGroupsRequest) (
 func (s *server) GetInvitedGroups(ctx context.Context, in *messages.GetInvitedGroupsRequest) (*messages.GetInvitedGroupsResponse, error) {
 	var groups []*messages.UserGroup
 
-	user, _ := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	token, _ := auth.GetToken(ctx)
+	user, _ := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
 	userGroups, err := qr.FindInviteUserToGroupsByUserId(ctx, db.GetDBConnect(), user.Id)
 	if err != nil {
 		return &messages.GetInvitedGroupsResponse{
@@ -293,7 +326,8 @@ func (s *server) GetInvitedGroups(ctx context.Context, in *messages.GetInvitedGr
 }
 
 func (s *server) JoinInvitedGroups(ctx context.Context, in *messages.JoinInvitedGroupsRequest) (*messages.JoinInvitedGroupsResponse, error) {
-	user, err := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	token, _ := auth.GetToken(ctx)
+	user, err := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
 	if err != nil {
 		return &messages.JoinInvitedGroupsResponse{
 			Status:     false,
@@ -359,7 +393,8 @@ func (s *server) InviteToGroup(ctx context.Context, in *messages.InviteToGroupRe
 }
 
 func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.UserResponse, error) {
-	user, err := qr.GetUser(db.GetDBConnect(), ctx, 1)
+	token, _ := auth.GetToken(ctx)
+	user, err := qr.GetUserByToken(db.GetDBConnect(), ctx, token)
 	if err != nil {
 		return &messages.UserResponse{
 			Status:     false,

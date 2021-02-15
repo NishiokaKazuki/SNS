@@ -23,12 +23,12 @@ type Tokens struct {
 }
 
 type ToFollows struct {
-	Id        uint64
-	ToUser    uint64
-	ByUser    uint64
-	Permit    uint8
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Id         uint64
+	ToUser     uint64
+	ByUser     uint64
+	Permission uint8
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
 }
 
 type Posts struct {
