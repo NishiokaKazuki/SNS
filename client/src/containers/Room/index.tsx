@@ -1,12 +1,10 @@
 import React from 'react'
 import Bubble from './Bubble'
 import KeyBoard from './KeyBoard'
-import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Container from '@material-ui/core/Container';
-import { Omit } from '@material-ui/types';
 
 const Room: React.FC = () => {
   const classes = useStyles();
@@ -39,10 +37,6 @@ const useStyles = makeStyles({
       paddingBottom:'100px',
     },
 });
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`
 
 const Root = styled.div`
   margin: auto;

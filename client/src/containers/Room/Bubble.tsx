@@ -9,7 +9,6 @@ interface Props {
 
 const Bubble: React.FC<Props> = (props) => {
   const classes = useStyles(props);
-  const {isOther} = props
   return (
     <div className={classes.root}>
       <Paper elevation={3}>{props.message}</Paper>

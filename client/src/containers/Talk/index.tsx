@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import styled from 'styled-components'
 // import Resizer from 'react-image-file-resizer'
 
@@ -76,10 +76,6 @@ const rows = [
   createData('../../../public/pose_pien_uruuru_man.png','Tester_4', 'hi', '1'),
   createData('../../../public/pose_pien_uruuru_man.png','Tester_5', 'hi', '1'),
 ];
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`
 
 const Root = styled.div`
   margin: auto;

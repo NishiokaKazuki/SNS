@@ -1,11 +1,8 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import styled from 'styled-components'
 import DrawerItems from './DrawerItems'
 
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
-import GitHubIcon from '@material-ui/icons/GitHub'
 import { makeStyles } from '@material-ui/core/styles'
 
 const Footer: React.FC = () => {
@@ -29,11 +26,5 @@ const useStyles = makeStyles(() => ({
         bottom: 0,
     }
 }))
-
-const StyledLink = styled(Link)`
-    margin: auto;
-    text-decoration: none;
-    color: white;
-`
 
 export default Footer

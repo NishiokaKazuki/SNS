@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
@@ -49,12 +48,6 @@ const Root = styled.div`
   margin: auto;
   padding-top: 80px;
   padding-bottom: 50px;
-`
-
-const StyledLink = styled(Link)`
-    margin: auto;
-    text-decoration: none;
-    color: white;
 `
 
 export default SignIn
