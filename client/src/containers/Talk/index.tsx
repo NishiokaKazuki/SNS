@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import styled from 'styled-components'
-import Resizer from 'react-image-file-resizer'
+// import Resizer from 'react-image-file-resizer'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Table from '@material-ui/core/Table';
