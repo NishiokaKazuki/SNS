@@ -1,6 +1,13 @@
 version: "3"
 
 services:
+  client:
+    build: ../client
+    volumes:
+      - ../client:/sns/client
+    ports:
+      - "3000:3000"
+    container_name: "sns-client"
   mysql:
     build: ../db
     restart: always
