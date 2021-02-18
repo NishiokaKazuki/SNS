@@ -175,7 +175,7 @@ func (s *server) Followers(ctx context.Context, in *messages.FollowersRequest) (
 			Id:        u.Id,
 			Handle:    u.Handle,
 			Name:      u.Name,
-			Birthday:  u.Birthday.Format(),
+			Birthday:  u.Birthday.Format("2006/01/02"),
 			Profile:   u.Profile,
 			IsPrivate: u.IsPrivate,
 		})
