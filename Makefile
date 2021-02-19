@@ -1,4 +1,5 @@
 run-server:
+	cd server &&\
 	realize start --server
 
 run-client:

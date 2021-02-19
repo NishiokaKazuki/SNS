@@ -1,26 +1,39 @@
 version: "3"
 
 services:
-  client:
-    build: ../client
-    volumes:
-      - ../client:/sns/client
+  # server:
+  #   build: ../server
+  #   volumes:
+  #     - ../server:/go/src/SNS/server
+  #   ports:
+  #     - "49400:49400"
+  #   container_name: "sns-server"
+  # client:
+  #   build: ../client
+  #   volumes:
+  #     - ../client:/sns/client
+  #   ports:
+  #     - "3000:3000"
+  #   container_name: "sns-client"
+  # mysql:
+  #   build: ../db
+  #   restart: always
+  #   volumes:
+  #     - "../db/data:/var/lib/mysql/"
+  #     - "../db/conf:/etc/mysql/conf.d"
+  #     - "../db/initdb.d:/docker-entrypoint-initdb.d"
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: secret
+  #     MYSQL_DATABASE: sns
+  #     MYSQL_USER: kazuki
+  #     MYSQL_PASSWORD: secret
+  #     TZ: 'Asia/Tokyo'
+  #   ports:
+  #     - "13306:3306"
+  #   container_name: "sns-db"
+  nginx:
+    build: ../proxy
     ports:
-      - "3000:3000"
-    container_name: "sns-client"
-  mysql:
-    build: ../db
-    restart: always
+      - "8080:49400"
     volumes:
-      - "../db/data:/var/lib/mysql/"
-      - "../db/conf:/etc/mysql/conf.d"
-      - "../db/initdb.d:/docker-entrypoint-initdb.d"
-    environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: sns
-      MYSQL_USER: kazuki
-      MYSQL_PASSWORD: secret
-      TZ: 'Asia/Tokyo'
-    ports:
-      - "13306:3306"
-    container_name: "sns-db"
+      - ./public:/usr/share/nginx/html
