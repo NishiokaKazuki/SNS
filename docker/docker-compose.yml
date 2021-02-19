@@ -1,6 +1,13 @@
 version: "3"
 
 services:
+  server:
+    build: ./server
+    volumes:
+      - ./server:/go/src/SNS/server
+    ports:
+      - "49400:49400"
+    container_name: "sns-server"
   client:
     build: ../client
     volumes:
