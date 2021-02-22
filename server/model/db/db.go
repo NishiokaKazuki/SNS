@@ -7,10 +7,6 @@ import (
 	"github.com/go-xorm/xorm"
 )
 
-const (
-	configpath = "server/config/config.toml"
-)
-
 var engine = XormConnect()
 
 func GetDBConnect() *xorm.Engine {
@@ -28,7 +24,7 @@ func XormConnect() *xorm.Engine {
 }
 
 func getDBConfig() (string, string) {
-	conf, err := config.ReadDBConfig(configpath)
+	conf, err := config.ReadDBConfig()
 	if err != nil {
 		panic(err.Error())
 	}

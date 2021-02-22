@@ -15,25 +15,25 @@ services:
   #   ports:
   #     - "3000:3000"
   #   container_name: "sns-client"
-  # mysql:
-  #   build: ../db
-  #   restart: always
-  #   volumes:
-  #     - "../db/data:/var/lib/mysql/"
-  #     - "../db/conf:/etc/mysql/conf.d"
-  #     - "../db/initdb.d:/docker-entrypoint-initdb.d"
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: secret
-  #     MYSQL_DATABASE: sns
-  #     MYSQL_USER: kazuki
-  #     MYSQL_PASSWORD: secret
-  #     TZ: 'Asia/Tokyo'
-  #   ports:
-  #     - "13306:3306"
-  #   container_name: "sns-db"
-  nginx:
-    build: ../proxy
-    ports:
-      - "8080:49400"
+  mysql:
+    build: ../db
+    restart: always
     volumes:
-      - ./public:/usr/share/nginx/html
+      - "../db/data:/var/lib/mysql/"
+      - "../db/conf:/etc/mysql/conf.d"
+      - "../db/initdb.d:/docker-entrypoint-initdb.d"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: sns
+      MYSQL_USER: kazuki
+      MYSQL_PASSWORD: secret
+      TZ: 'Asia/Tokyo'
+    ports:
+      - "13306:3306"
+    container_name: "sns-db"
+  # nginx:
+  #   build: ../proxy
+  #   ports:
+  #     - "8080:49400"
+  #   volumes:
+  #     - ./public:/usr/share/nginx/html

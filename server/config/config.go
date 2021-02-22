@@ -28,18 +28,22 @@ type DBConfigs struct {
 	DbName   string `toml:"dbname"`
 }
 
-func ReadAPIConfig(path string) (APIConfigs, error) {
+const (
+	configpath = "server/config/config.toml"
+)
+
+func ReadAPIConfig() (APIConfigs, error) {
 	var config APIConfig
-	_, err := toml.DecodeFile(path, &config)
+	_, err := toml.DecodeFile(configpath, &config)
 	if err != nil {
 		log.Println("filed:read APIconfig")
 	}
 	return config.API, err
 }
 
-func ReadDBConfig(path string) (DBConfigs, error) {
+func ReadDBConfig() (DBConfigs, error) {
 	var config DBConfig
-	_, err := toml.DecodeFile(path, &config)
+	_, err := toml.DecodeFile(configpath, &config)
 	if err != nil {
 		log.Println("filed:read DBconfig")
 	}
