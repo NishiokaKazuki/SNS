@@ -2,3 +2,4 @@
 /server/generated/enums/*
 /server/generated/messages/*
 /server/generated/services/*
+/proxy/keys/*

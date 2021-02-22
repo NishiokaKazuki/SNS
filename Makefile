@@ -34,3 +34,7 @@ docker-ps:
 docker-exec-db:
 	cd docker &&\
 	docker exec -it sns-db /bin/bash
+
+docker-exec-proxy:
+	cd docker &&\
+	docker exec -it sns-proxy /bin/bash
