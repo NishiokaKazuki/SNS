@@ -10,6 +10,10 @@ protoc-server:
 	protoc -I protobuf/ protobuf/messages.proto --go_out=plugins=grpc:./
 	protoc -I protobuf/ protobuf/services.proto --go_out=plugins=grpc:./
 
+protoc-client:
+	cd client &&\
+	sh protoc.sh
+
 docker-build:
 	cd docker &&\
 	docker-compose build --no-cache
