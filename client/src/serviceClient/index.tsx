@@ -6,7 +6,8 @@ import pb from '../proto/messages_pb';
 //   client: ServiceClient;
 // };
 
-const client = new ServiceClient(`http://localhost:80`);
+
+const client = new ServiceClient('http://localhost:80', {});
 
 // const serviceClient = <P extends {}>(WrappedComponent: React.ComponentType<P & ServiceClientAttached>) =>
 //   class MessageServiceAttached extends React.Component<P> {
@@ -33,6 +34,7 @@ class serviceClient {
         resolve(res)
       })
     })
+
   }
 }
 

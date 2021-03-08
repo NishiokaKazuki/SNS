@@ -1,31 +1,35 @@
 import { createSlice } from '@reduxjs/toolkit';
-import serviceClient from '../serviceClient'
 // import { iSignin } from '../serviceClient'
 
+interface Auth {
+    isAuthenticated: boolean;
+    token: string;
+}
+
+interface AuthState {
+    nextAuthId: number;
+    list: Auth[];
+};
+
 // Stateの初期状態
-const initialState = {
-    isAuthenticated: false,
-    token: '',
+const initialAuthState:AuthState = {
+    nextAuthId: 0,
+    list: [],
 };
 
 // Sliceを生成する
 const slice = createSlice({
     name: 'Auth',
-    initialState,
+    initialState:initialAuthState,
     reducers: {
-        signIn: (state, action)=>{
-            const {handle, pw} = action.payload
-            const res: any = serviceClient.signinRequest({handle:handle, pw:pw})
-            console.log('aaa')
-            // setToken(res.getToken())
-            return Object.assign({}, state, { isAuthenticated: action.payload })
+        setAuth: (state, action)=>{
+            state.list.push(action.payload)
+        },
+        setToken:(state, action)=>{
+            return Object.assign({}, state, { token: action.payload })
         },
         setIsAuthenticated: (state, action)=>{
             return Object.assign({}, state, { isAuthenticated: action.payload })
-        },
-        setToken: (state, action)=>{
-            console.log(action.payload)
-            return Object.assign({}, state, { token: action.payload })
         },
         clearToken: state=>{
             return Object.assign({}, state, { token: '' })
@@ -34,4 +38,4 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
-export const { signIn, setIsAuthenticated, setToken, clearToken } = slice.actions;
+export const { setAuth, setIsAuthenticated, setToken, clearToken } = slice.actions;

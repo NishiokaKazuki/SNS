@@ -26,7 +26,6 @@ import (
 type server struct{}
 
 func (s *server) SignIn(ctx context.Context, in *messages.SignInRequest) (*messages.SignInResponse, error) {
-
 	user, err := qr.GetUserByPass(db.GetDBConnect(), ctx, in.Handle, auth.HashPw(in.Password))
 	if err != nil || user.Id == 0 {
 		return &messages.SignInResponse{
@@ -538,10 +537,38 @@ func ListenAndServe(port string) {
 			grpc_auth.StreamServerInterceptor(auth.StreamServerAuthorized),
 		),
 	)
+
 	pb.RegisterServiceServer(s, &server{})
+	// grpcWebServer := grpcweb.WrapServer(
+	// 	s,
+	// 	grpcweb.WithOriginFunc(func(origin string) bool { return true }),
+	// )
+	// httpServer := &http.Server{
+	// 	Handler: h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// 		if r.ProtoMajor == 2 {
+	// 			grpcWebServer.ServeHTTP(w, r)
+	// 		} else {
+	// 			w.Header().Set("Access-Control-Allow-Origin", "*")
+	// 			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	// 			w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-User-Agent, X-Grpc-Web")
+	// 			w.Header().Set("grpc-status", "")
+	// 			w.Header().Set("grpc-message", "")
+	// 			if grpcWebServer.IsGrpcWebRequest(r) {
+	// 				grpcWebServer.ServeHTTP(w, r)
+	// 			}
+	// 		}
+	// 	}), &http2.Server{}),
+	// }
+
+	// wrappedServer := grpcweb.WrapServer(
+	// 	s,
+	// 	grpcweb.WithOriginFunc(func(origin string) bool { return true }),
+	// )
+	// http.Handle("/", wrappedServer)
 
 	log.Println("starting server", port)
 	err = s.Serve(listenPort)
+	// httpServer.Serve(listenPort)
 	if err != nil {
 		log.Fatal("failed open", port)
 	}

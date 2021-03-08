@@ -5,14 +5,14 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-import { signIn } from '../../store/AuthReducer'
+import { signIn } from '../../actions'
 
 const SignIn: React.FC = () => {
-  const classes = useStyles();
   const [handle, setHandle] = React.useState("")
   const [pw, setPw] = React.useState("")
   const auth = useSelector((state: any) => state.auth);
   const dispatch = useDispatch()
+  const classes = useStyles()
 
   const onChangeHandle = (e: any) => {
     setHandle(e.target.value)
@@ -21,6 +21,7 @@ const SignIn: React.FC = () => {
     setPw(e.target.value)
   }
   const handleSignin = () => dispatch(
+    // setAuth({isAuthenticated: true, token:'aaa'})
     signIn({handle, pw})
   )
 
@@ -46,6 +47,7 @@ const SignIn: React.FC = () => {
       </form>
       <Button variant="contained" color="secondary" onClick={handleSignin}>
         サインイン
+        {auth.list.length}
       </Button>
     </Root>
   )
@@ -61,6 +63,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+
 
 const Root = styled.div`
   margin: auto;

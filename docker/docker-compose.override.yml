@@ -1,6 +1,9 @@
 version: "3" # docker-compose.yamlのバージョンと合わせる
 
 services:
-  nginx: # host.docker.internalを使用したいサービス名
+  # nginx: # host.docker.internalを使用したいサービス名
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  envoy: # host.docker.internalを使用したいサービス名
     extra_hosts:
       - "host.docker.internal:host-gateway"

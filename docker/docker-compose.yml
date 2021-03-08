@@ -31,13 +31,20 @@ services:
     ports:
       - "13306:3306"
     container_name: "sns-db"
-  nginx:
-    build: ../proxy
+  # nginx:
+  #   build: ../proxy
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     # - ../proxy/nginx.conf:/etc/nginx/nginx.conf
+  #     - ../proxy/common:/etc/nginx/common
+  #     - ../proxy/conf.d:/etc/nginx/conf.d
+  #     - ../proxy/keys:/etc/nginx/certs
+  #   container_name: "sns-proxy"
+  envoy:
+    build: ../envoy
+    volumes:
+      - ../envoy:/etc/envoy
     ports:
       - "80:80"
-    volumes:
-      # - ../proxy/nginx.conf:/etc/nginx/nginx.conf
-      # - ../proxy/common:/etc/nginx/common
-      - ../proxy/conf.d:/etc/nginx/conf.d
-      - ../proxy/keys:/etc/nginx/certs
-    container_name: "sns-proxy"
+    container_name: "envoy-proxy"
