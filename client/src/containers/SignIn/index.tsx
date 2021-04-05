@@ -5,7 +5,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 
-import { signIn } from '../../actions'
+import { signIn, user } from '../../actions'
 
 const SignIn: React.FC = () => {
   const [handle, setHandle] = React.useState("")
@@ -23,6 +23,10 @@ const SignIn: React.FC = () => {
   const handleSignin = () => dispatch(
     // setAuth({isAuthenticated: true, token:'aaa'})
     signIn({handle, pw})
+  )
+  const handleUser = () => dispatch(
+    // setAuth({isAuthenticated: true, token:'aaa'})
+    user({token:auth.list[0].token})
   )
 
   return (
@@ -47,7 +51,9 @@ const SignIn: React.FC = () => {
       </form>
       <Button variant="contained" color="secondary" onClick={handleSignin}>
         サインイン
-        {auth.list.length}
+      </Button>
+      <Button variant="contained" color="secondary" onClick={handleUser}>
+        ユーザ
       </Button>
     </Root>
   )

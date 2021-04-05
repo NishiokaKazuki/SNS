@@ -9,14 +9,34 @@ const initialState = {
     isPrivate: true,
 };
 
+interface User {
+    id: number
+    handle: string
+    name: string
+    birthday: string
+    profile: string
+    isPrivate: boolean
+}
+
+interface UserState {
+    nextUserId: number;
+    list: User[];
+};
+
+// Stateの初期状態
+const initialUserState:UserState = {
+    nextUserId: 0,
+    list: [],
+};
+
+
 // Sliceを生成する
 const slice = createSlice({
     name: 'User',
-    initialState,
+    initialState: initialUserState,
     reducers: {
         setUser: (state, action)=>{
-            const { id, handle, name, birthday, profile, isPrivate} = action.payload
-            return Object.assign({}, state, { id, handle, name, birthday, profile, isPrivate })
+            state.list.push(action.payload)
         },
         clearUser: state=>{
             return Object.assign({}, state, {

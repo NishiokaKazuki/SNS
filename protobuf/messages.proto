@@ -99,7 +99,6 @@ message InviteToGroupResponse {
 }
 
 message UserRequest {
-    string token = 1;
 }
 message UserResponse {
     bool status = 1;

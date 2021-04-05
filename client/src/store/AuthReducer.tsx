@@ -1,3 +1,4 @@
+import { List } from '@material-ui/icons';
 import { createSlice } from '@reduxjs/toolkit';
 // import { iSignin } from '../serviceClient'
 
@@ -25,17 +26,8 @@ const slice = createSlice({
         setAuth: (state, action)=>{
             state.list.push(action.payload)
         },
-        setToken:(state, action)=>{
-            return Object.assign({}, state, { token: action.payload })
-        },
-        setIsAuthenticated: (state, action)=>{
-            return Object.assign({}, state, { isAuthenticated: action.payload })
-        },
-        clearToken: state=>{
-            return Object.assign({}, state, { token: '' })
-        },
     }
 });
 
 export default slice.reducer;
-export const { setAuth, setIsAuthenticated, setToken, clearToken } = slice.actions;
+export const { setAuth } = slice.actions;
