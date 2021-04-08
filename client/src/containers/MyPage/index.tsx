@@ -2,32 +2,29 @@ import React from 'react'
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-
-import { signIn } from '../../actions'
 
 const MyPage: React.FC = () => {
-  const [handle, setHandle] = React.useState("")
-  const [pw, setPw] = React.useState("")
-  const auth = useSelector((state: any) => state.auth);
-  const dispatch = useDispatch()
-  const classes = useStyles()
+  const user = useSelector((state: any) => state.user);
+  var name = "";
+  var handle = "";
+  var birthday = "";
+  var profile = "";
+  var isPrivate = false;
 
-  const onChangeHandle = (e: any) => {
-    setHandle(e.target.value)
+  if (user.list.length>0) {
+    name = user.list[user.list.length-1].name
+    handle = user.list[user.list.length-1].handle
+    birthday = user.list[user.list.length-1].birthday
+    profile = user.list[user.list.length-1].profile
+    isPrivate = user.list[user.list.length-1].isPrivate
   }
-  const onChangePassword = (e: any) => {
-    setPw(e.target.value)
-  }
-  const handleSignin = () => dispatch(
-    // setAuth({isAuthenticated: true, token:'aaa'})
-    signIn({handle, pw})
-  )
 
   return (
     <Root>
-
+      <div>名前: {name}</div>
+      <div>ID: {handle}</div>
+      <div>誕生日: {birthday}</div>
+      <div>プロフィール: {profile}</div>
     </Root>
   )
 }
