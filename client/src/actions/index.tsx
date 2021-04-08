@@ -61,6 +61,16 @@ export const signIn = (arg: { handle: string, pw: string }) => {
     }
 }
 
+export const signOut = () => {
+    return async (dispatch: Dispatch<Action>) => {
+        const auth = {
+            isAuthenticated: false,
+            token:'',
+        }
+        dispatch(setAuth(auth))
+    }
+}
+
 export const user = (arg: { token: string }) => {
     return async (dispatch: Dispatch<Action>) => {
         try {

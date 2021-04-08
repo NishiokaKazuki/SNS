@@ -27,28 +27,7 @@ const MyPage: React.FC = () => {
 
   return (
     <Root>
-      <form className={classes.root} noValidate autoComplete="off">
-        <div>
-          <TextField
-            id="outlined-password-input"
-            label="User"
-            variant="outlined"
-            onChange={onChangeHandle}
-          />
-          <TextField
-            id="outlined-password-input"
-            label="Password"
-            type="password"
-            autoComplete="current-password"
-            variant="outlined"
-            onChange={onChangePassword}
-          />
-        </div>
-      </form>
-      <Button variant="contained" color="secondary" onClick={handleSignin}>
-        サインイン
-        {auth.list.length}
-      </Button>
+
     </Root>
   )
 }
