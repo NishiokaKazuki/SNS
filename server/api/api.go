@@ -406,6 +406,7 @@ func (s *server) User(ctx context.Context, in *messages.UserRequest) (*messages.
 		Status:     true,
 		StatusCode: enums.StatusCodes_SUCCESS,
 		User: &messages.AppUser{
+			Id:        user.Id,
 			Handle:    user.Handle,
 			Name:      user.Name,
 			Birthday:  user.Birthday.String(),
