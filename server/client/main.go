@@ -42,6 +42,11 @@ func main() {
 		signIn(ctx, client)
 
 	case "mes":
+		finish := make(chan bool)
+
+		go message(ctx, client)
+		go receive(ctx, client)
+		<-finish
 		message(ctx, client)
 	case "rec":
 		receive(ctx, client)
@@ -61,9 +66,7 @@ func user(ctx context.Context, client pb.ServiceClient) {
 	token := args[2]
 	md := metadata.New(map[string]string{"authorization": "Bearer " + token})
 	ctx = metadata.NewOutgoingContext(ctx, md)
-	res, err := client.User(ctx, &messages.UserRequest{
-		Token: "not used",
-	})
+	res, err := client.User(ctx, &messages.UserRequest{})
 
 	if err == nil {
 		log.Println(res)
@@ -126,22 +129,20 @@ func message(ctx context.Context, client pb.ServiceClient) {
 	md := metadata.New(map[string]string{"authorization": "Bearer " + token})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
-	stream, err := client.Message(ctx)
-	if err != nil {
-		log.Println(err)
-	}
-
 	for {
 		var send uint64
 		var body string
 		fmt.Scan(&send)
 		fmt.Scan(&body)
-		// お返し
-		stream.Send(&messages.MessageRequest{
+		res, err := client.Message(ctx, &messages.MessageRequest{
 			IsUser: true,
 			SendId: send,
 			Body:   body,
 		})
+		if err != nil {
+			log.Println(res)
+			log.Println(err)
+		}
 	}
 }
 
